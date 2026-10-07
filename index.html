@@ -1,945 +1,526 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>StudyFlow｜学習管理</title>
+  <meta
+    name="description"
+    content="StudyFlow - 高校生のためのシンプルな学習計画・記録サイト"
+  >
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <title>StudyFlow｜学習計画・記録</title>
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-               "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-  background: #f4f6f8;
-  color: #222;
-}
-
-header {
-  background: white;
-  padding: 20px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-header p {
-  margin: 7px 0 0;
-  color: #666;
-  font-size: 14px;
-}
-
-.container {
-  max-width: 650px;
-  margin: auto;
-  padding: 18px;
-}
-
-.card {
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 20px;
-}
-
-.date {
-  color: #777;
-  font-size: 14px;
-  margin-bottom: 15px;
-}
-
-/* 进度 */
-
-.progress-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.progress-bg {
-  width: 100%;
-  height: 14px;
-  background: #e5e7eb;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-#progressBar {
-  width: 0%;
-  height: 100%;
-  background: #333;
-  transition: width 0.3s;
-}
-
-/* 添加任务 */
-
-.add-area {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 15px;
-}
-
-#taskInput {
-  flex: 1;
-  min-width: 0;
-  padding: 11px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-button {
-  border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-.add-btn {
-  background: #222;
-  color: white;
-}
-
-/* 任务 */
-
-.task {
-  display: flex;
-  align-items: center;
-  padding: 12px 5px;
-  border-bottom: 1px solid #eee;
-}
-
-.task:last-child {
-  border-bottom: none;
-}
-
-.task input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
-}
-
-.task-name {
-  flex: 1;
-  font-size: 16px;
-}
-
-.task.completed .task-name {
-  text-decoration: line-through;
-  color: #999;
-}
-
-.delete-btn {
-  background: transparent;
-  color: #999;
-  font-size: 20px;
-  padding: 5px 10px;
-}
-
-.empty {
-  color: #999;
-  text-align: center;
-  padding: 15px;
-}
-
-/* Timer */
-
-.timer {
-  font-size: 42px;
-  text-align: center;
-  font-weight: bold;
-  margin: 20px 0;
-  letter-spacing: 2px;
-}
-
-.timer-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.start {
-  background: #222;
-  color: white;
-}
-
-.pause {
-  background: #ddd;
-}
-
-.reset {
-  background: #eee;
-}
-
-.total-time {
-  text-align: center;
-  margin-top: 18px;
-  color: #555;
-}
-
-/* 历史记录 */
-
-.history-item {
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.history-item:last-child {
-  border-bottom: none;
-}
-
-.history-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 7px;
-}
-
-.history-date {
-  font-weight: bold;
-}
-
-.history-rate {
-  font-weight: bold;
-}
-
-.history-detail {
-  color: #666;
-  font-size: 14px;
-}
-
-.history-bar-bg {
-  width: 100%;
-  height: 7px;
-  background: #eee;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 9px;
-}
-
-.history-bar {
-  height: 100%;
-  background: #333;
-}
-
-.clear-history {
-  width: 100%;
-  margin-top: 15px;
-  background: #eee;
-  color: #666;
-}
-
-@media (max-width: 480px) {
-  .timer {
-    font-size: 35px;
-  }
-}
-</style>
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-  <h1>StudyFlow</h1>
-  <p>高校生のための学習計画・記録</p >
+<!-- =========================
+     Header
+========================= -->
+
+<header class="site-header">
+
+  <nav class="nav">
+
+    <div class="logo">
+      StudyFlow
+    </div>
+
+    <div class="nav-links">
+      <a href=" ">ホーム</a >
+      <a href="#plan">学習計画</a >
+      <a href="#timer">タイマー</a >
+      <a href="#history">学習記録</a >
+      <a href="#stats">統計</a >
+    </div>
+
+  </nav>
+
 </header>
 
-<div class="container">
 
-  <!-- 今日进度 -->
+<main>
 
-  <div class="card">
+<!-- =========================
+     Home
+========================= -->
 
-    <h2>📊 今日の進捗</h2>
+<section id="home">
 
-    <div class="date" id="todayDate"></div>
+  <div class="hero">
 
-    <div class="progress-info">
-      <span>
-        完了：
-        <strong id="doneCount">0</strong>
-        /
-        <strong id="totalCount">0</strong>
-      </span>
-
-      <span>
-        <strong id="rate">0</strong>%
-      </span>
+    <div
+      class="hero-date"
+      id="todayDate">
     </div>
 
-    <div class="progress-bg">
-      <div id="progressBar"></div>
-    </div>
+    <h1>
+      今日も、自分のペースで。
+    </h1>
+
+    <p>
+      学習計画から記録まで、
+      StudyFlowでシンプルに管理。
+    </p >
 
   </div>
 
 
-  <!-- 今日任务 -->
+  <div class="grid">
+
+    <!-- 今日进度 -->
+
+    <div class="card">
+
+      <div class="card-title">
+        今日の達成率
+      </div>
+
+      <div
+        class="big-number"
+        id="todayProgress">
+        0%
+      </div>
+
+      <div
+        class="small-text"
+        id="progressDetail">
+        0 / 0 完了
+      </div>
+
+      <div class="progress-track">
+        <div
+          class="progress-bar"
+          id="progressBar">
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- 计划时间 -->
+
+    <div class="card">
+
+      <div class="card-title">
+        今日の予定時間
+      </div>
+
+      <div
+        class="big-number"
+        id="plannedTime">
+        0分
+      </div>
+
+      <div class="small-text">
+        登録した学習予定
+      </div>
+
+    </div>
+
+
+    <!-- 实际时间 -->
+
+    <div class="card">
+
+      <div class="card-title">
+        今日の学習時間
+      </div>
+
+      <div
+        class="big-number"
+        id="actualTime">
+        0分
+      </div>
+
+      <div class="small-text">
+        タイマーで記録
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     Study Plan
+========================= -->
+
+<section id="plan">
+
+  <h2 class="section-title">
+    学習計画
+  </h2>
+
+  <p class="section-subtitle">
+    今日取り組む内容を登録しましょう。
+  </p >
+
 
   <div class="card">
 
-    <h2>📚 今日の学習</h2>
+    <div class="task-form">
 
-    <div class="add-area">
+      <!-- 科目 -->
+
+      <select id="subjectInput">
+
+        <option value="数学">
+          数学
+        </option>
+
+        <option value="英語">
+          英語
+        </option>
+
+        <option value="物理">
+          物理
+        </option>
+
+        <option value="化学">
+          化学
+        </option>
+
+        <option value="国語">
+          国語
+        </option>
+
+        <option value="情報">
+          情報
+        </option>
+
+        <option value="その他">
+          その他
+        </option>
+
+      </select>
+
+
+      <!-- 内容 -->
 
       <input
-        id="taskInput"
+        class="task-content-input"
+        id="contentInput"
         type="text"
-        placeholder="例：数学 プラチカ10問"
+        maxlength="100"
+        placeholder="例：プラチカ 10問"
       >
 
-      <button class="add-btn" onclick="addTask()">
+
+      <!-- 预计时间 -->
+
+      <input
+        id="minutesInput"
+        type="number"
+        min="0"
+        max="1440"
+        placeholder="予定(分)"
+      >
+
+
+      <!-- 优先度 -->
+
+      <select id="priorityInput">
+
+        <option value="高">
+          優先度：高
+        </option>
+
+        <option value="普通" selected>
+          優先度：普通
+        </option>
+
+        <option value="低">
+          優先度：低
+        </option>
+
+      </select>
+
+
+      <button
+        class="primary-btn"
+        onclick="addTask()">
         追加
       </button>
 
     </div>
 
-    <div id="taskList"></div>
+
+    <div
+      class="task-list"
+      id="taskList">
+    </div>
 
   </div>
 
+</section>
 
-  <!-- Timer -->
 
-  <div class="card">
+<!-- =========================
+     Timer
+========================= -->
 
-    <h2>⏱ 学習タイマー</h2>
+<section id="timer">
 
-    <div class="timer" id="timer">
+  <h2 class="section-title">
+    学習タイマー
+  </h2>
+
+  <p class="section-subtitle">
+    実際の学習時間を記録できます。
+  </p >
+
+
+  <div class="card timer-card">
+
+    <select
+      class="timer-subject"
+      id="timerSubject">
+
+      <option value="数学">
+        数学を勉強する
+      </option>
+
+      <option value="英語">
+        英語を勉強する
+      </option>
+
+      <option value="物理">
+        物理を勉強する
+      </option>
+
+      <option value="化学">
+        化学を勉強する
+      </option>
+
+      <option value="国語">
+        国語を勉強する
+      </option>
+
+      <option value="情報">
+        情報を勉強する
+      </option>
+
+      <option value="その他">
+        その他
+      </option>
+
+    </select>
+
+
+    <div
+      class="small-text"
+      id="timerStatus">
+      準備完了
+    </div>
+
+
+    <div
+      class="timer-display"
+      id="timerDisplay">
       00:00:00
     </div>
 
-    <div class="timer-buttons">
 
-      <button class="start" onclick="startTimer()">
-        開始
+    <div class="timer-actions">
+
+      <button
+        class="primary-btn"
+        onclick="startTimer()">
+        ▶ 開始
       </button>
 
-      <button class="pause" onclick="pauseTimer()">
+      <button
+        class="secondary-btn"
+        onclick="pauseTimer()">
         一時停止
       </button>
 
-      <button class="reset" onclick="resetTimer()">
+      <button
+        class="secondary-btn"
+        onclick="resetTimer()">
         リセット
       </button>
 
     </div>
 
-    <div class="total-time">
-      今日の学習時間：
-      <strong id="studyTime">0分</strong>
+  </div>
+
+</section>
+
+
+<!-- =========================
+     History
+========================= -->
+
+<section id="history">
+
+  <h2 class="section-title">
+    学習記録
+  </h2>
+
+  <p class="section-subtitle">
+    最近の学習状況を確認できます。
+  </p >
+
+
+  <div class="card">
+
+    <div id="historyList">
+
+      <div class="empty-state">
+        まだ学習記録がありません。
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     Statistics
+========================= -->
+
+<section id="stats">
+
+  <h2 class="section-title">
+    学習統計
+  </h2>
+
+  <p class="section-subtitle">
+    最近7日間の学習状況です。
+  </p >
+
+
+  <div class="stats-grid">
+
+    <div class="card">
+
+      <div class="card-title">
+        7日間の学習時間
+      </div>
+
+      <div
+        class="big-number"
+        id="weeklyTime">
+        0分
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        7日間の達成率
+      </div>
+
+      <div
+        class="big-number"
+        id="weeklyRate">
+        0%
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        連続学習
+      </div>
+
+      <div
+        class="big-number"
+        id="studyStreak">
+        0日
+      </div>
+
     </div>
 
   </div>
 
 
-  <!-- 历史 -->
+  <div
+    class="card"
+    style="margin-top:18px;"
+  >
 
-  <div class="card">
+    <div class="card-title">
+      科目別学習時間
+    </div>
 
-    <h2>📅 学習記録</h2>
+    <div id="subjectStats">
 
-    <div id="historyList"></div>
+      <div class="empty-state">
+        タイマーを使うと、
+        科目別の学習時間が表示されます。
+      </div>
 
-    <button
-      class="clear-history"
-      onclick="clearHistory()">
-      学習記録を削除
-    </button>
+    </div>
 
   </div>
 
-</div>
+</section>
 
 
-<script>
+<!-- =========================
+     About
+========================= -->
 
-/* =========================
-   日期
-========================= */
+<section id="about">
 
-const today = new Date();
+  <h2 class="section-title">
+    StudyFlowについて
+  </h2>
 
-const dateKey =
-  today.getFullYear() + "-" +
-  (today.getMonth() + 1) + "-" +
-  today.getDate();
+  <div class="card">
 
-document.getElementById("todayDate").textContent =
-  today.toLocaleDateString(
-    "ja-JP",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      weekday: "short"
-    }
-  );
+    <div class="about-text">
 
+      StudyFlowは、
+      高校生が毎日の学習計画と学習時間を
+      シンプルに管理するためのWebサイトです。
 
-/* =========================
-   今日任务
-========================= */
+      <br><br>
 
-const taskStorageKey =
-  "studyflow_tasks_" + dateKey;
+      今日やることを決め、
+      タイマーで学習時間を記録し、
+      日々の積み重ねを確認できます。
 
-let tasks =
-  JSON.parse(
-    localStorage.getItem(taskStorageKey)
-  ) || [];
+      <br><br>
 
+      登録したデータは、
+      このブラウザ内に保存されます。
 
-/* 今天没有数据时创建默认任务 */
+    </div>
 
-if (tasks.length === 0) {
+  </div>
 
-  tasks = [
-    { name: "数学", completed: false },
-    { name: "英語", completed: false },
-    { name: "物理", completed: false },
-    { name: "化学", completed: false }
-  ];
+</section>
 
-  saveTasks();
-}
+</main>
 
 
-/* 保存任务 */
+<!-- =========================
+     Footer
+========================= -->
 
-function saveTasks() {
+<footer>
+  © 2026 StudyFlow
+</footer>
 
-  localStorage.setItem(
-    taskStorageKey,
-    JSON.stringify(tasks)
-  );
 
-  saveTodayRecord();
-}
+<!-- JavaScript -->
 
-
-/* 显示任务 */
-
-function renderTasks() {
-
-  const list =
-    document.getElementById("taskList");
-
-  list.innerHTML = "";
-
-  if (tasks.length === 0) {
-
-    list.innerHTML =
-      '<div class="empty">学習予定を追加してください</div>';
-
-  }
-
-  tasks.forEach((task, index) => {
-
-    const div =
-      document.createElement("div");
-
-    div.className =
-      "task" +
-      (task.completed ? " completed" : "");
-
-    div.innerHTML = `
-      <input
-        type="checkbox"
-        ${task.completed ? "checked" : ""}
-        onchange="toggleTask(${index})"
-      >
-
-      <span class="task-name">
-        ${escapeHTML(task.name)}
-      </span>
-
-      <button
-        class="delete-btn"
-        onclick="deleteTask(${index})">
-        ×
-      </button>
-    `;
-
-    list.appendChild(div);
-
-  });
-
-  updateProgress();
-
-}
-
-
-/* 添加 */
-
-function addTask() {
-
-  const input =
-    document.getElementById("taskInput");
-
-  const name =
-    input.value.trim();
-
-  if (!name) return;
-
-  tasks.push({
-    name: name,
-    completed: false
-  });
-
-  input.value = "";
-
-  saveTasks();
-  renderTasks();
-
-}
-
-
-/* Enter添加 */
-
-document
-  .getElementById("taskInput")
-  .addEventListener(
-    "keydown",
-    function(event) {
-
-      if (event.key === "Enter") {
-        addTask();
-      }
-
-    }
-  );
-
-
-/* 完成 */
-
-function toggleTask(index) {
-
-  tasks[index].completed =
-    !tasks[index].completed;
-
-  saveTasks();
-  renderTasks();
-
-}
-
-
-/* 删除 */
-
-function deleteTask(index) {
-
-  tasks.splice(index, 1);
-
-  saveTasks();
-  renderTasks();
-
-}
-
-
-/* 进度 */
-
-function updateProgress() {
-
-  const total =
-    tasks.length;
-
-  const done =
-    tasks.filter(
-      task => task.completed
-    ).length;
-
-  const percent =
-    total === 0
-      ? 0
-      : Math.round(done / total * 100);
-
-  document.getElementById(
-    "doneCount"
-  ).textContent = done;
-
-  document.getElementById(
-    "totalCount"
-  ).textContent = total;
-
-  document.getElementById(
-    "rate"
-  ).textContent = percent;
-
-  document.getElementById(
-    "progressBar"
-  ).style.width =
-    percent + "%";
-
-}
-
-
-/* 安全显示文字 */
-
-function escapeHTML(text) {
-
-  const div =
-    document.createElement("div");
-
-  div.textContent = text;
-
-  return div.innerHTML;
-
-}
-
-
-/* =========================
-   Timer
-========================= */
-
-const timerStorageKey =
-  "studyflow_time_" + dateKey;
-
-let seconds =
-  Number(
-    localStorage.getItem(timerStorageKey)
-  ) || 0;
-
-let timerInterval = null;
-
-
-function updateTimerDisplay() {
-
-  const hours =
-    Math.floor(seconds / 3600);
-
-  const minutes =
-    Math.floor((seconds % 3600) / 60);
-
-  const secs =
-    seconds % 60;
-
-  document.getElementById(
-    "timer"
-  ).textContent =
-    String(hours).padStart(2, "0")
-    + ":" +
-    String(minutes).padStart(2, "0")
-    + ":" +
-    String(secs).padStart(2, "0");
-
-  updateStudyTime();
-
-}
-
-
-function startTimer() {
-
-  if (timerInterval) return;
-
-  timerInterval =
-    setInterval(() => {
-
-      seconds++;
-
-      localStorage.setItem(
-        timerStorageKey,
-        seconds
-      );
-
-      updateTimerDisplay();
-
-      if (seconds % 5 === 0) {
-        saveTodayRecord();
-      }
-
-    }, 1000);
-
-}
-
-
-function pauseTimer() {
-
-  clearInterval(timerInterval);
-
-  timerInterval = null;
-
-  saveTodayRecord();
-
-}
-
-
-function resetTimer() {
-
-  const ok =
-    confirm(
-      "今日の学習時間をリセットしますか？"
-    );
-
-  if (!ok) return;
-
-  pauseTimer();
-
-  seconds = 0;
-
-  localStorage.setItem(
-    timerStorageKey,
-    0
-  );
-
-  updateTimerDisplay();
-  saveTodayRecord();
-
-}
-
-
-function updateStudyTime() {
-
-  const hours =
-    Math.floor(seconds / 3600);
-
-  const minutes =
-    Math.floor((seconds % 3600) / 60);
-
-  let text = "";
-
-  if (hours > 0) {
-    text += hours + "時間 ";
-  }
-
-  text += minutes + "分";
-
-  document.getElementById(
-    "studyTime"
-  ).textContent = text;
-
-}
-
-
-/* =========================
-   学习历史
-========================= */
-
-const historyKey =
-  "studyflow_history";
-
-
-function getHistory() {
-
-  return JSON.parse(
-    localStorage.getItem(historyKey)
-  ) || {};
-
-}
-
-
-/* 保存今天的数据到历史 */
-
-function saveTodayRecord() {
-
-  if (typeof tasks === "undefined") {
-    return;
-  }
-
-  const history =
-    getHistory();
-
-  const total =
-    tasks.length;
-
-  const done =
-    tasks.filter(
-      task => task.completed
-    ).length;
-
-  const percent =
-    total === 0
-      ? 0
-      : Math.round(done / total * 100);
-
-  history[dateKey] = {
-    date: dateKey,
-    total: total,
-    done: done,
-    percent: percent,
-    seconds: typeof seconds !== "undefined"
-      ? seconds
-      : Number(
-          localStorage.getItem(
-            "studyflow_time_" + dateKey
-          )
-        ) || 0
-  };
-
-  localStorage.setItem(
-    historyKey,
-    JSON.stringify(history)
-  );
-
-  renderHistory();
-
-}
-
-
-/* 时间转换 */
-
-function formatHistoryTime(totalSeconds) {
-
-  const hours =
-    Math.floor(totalSeconds / 3600);
-
-  const minutes =
-    Math.floor(
-      (totalSeconds % 3600) / 60
-    );
-
-  if (hours > 0) {
-    return hours + "時間" + minutes + "分";
-  }
-
-  return minutes + "分";
-
-}
-
-
-/* 日期显示 */
-
-function formatHistoryDate(key) {
-
-  const parts =
-    key.split("-");
-
-  return (
-    Number(parts[1]) +
-    "月" +
-    Number(parts[2]) +
-    "日"
-  );
-
-}
-
-
-/* 显示历史 */
-
-function renderHistory() {
-
-  const history =
-    getHistory();
-
-  const list =
-    document.getElementById(
-      "historyList"
-    );
-
-  list.innerHTML = "";
-
-  const records =
-    Object.values(history)
-      .sort((a, b) =>
-        b.date.localeCompare(a.date)
-      );
-
-  if (records.length === 0) {
-
-    list.innerHTML =
-      '<div class="empty">まだ学習記録がありません</div>';
-
-    return;
-  }
-
-
-  records.forEach(record => {
-
-    const item =
-      document.createElement("div");
-
-    item.className =
-      "history-item";
-
-    item.innerHTML = `
-
-      <div class="history-top">
-
-        <span class="history-date">
-          ${formatHistoryDate(record.date)}
-        </span>
-
-        <span class="history-rate">
-          ${record.percent}%
-        </span>
-
-      </div>
-
-      <div class="history-detail">
-
-        ${record.done}/${record.total} 完了
-
-        ・
-
-        学習時間
-        ${formatHistoryTime(record.seconds)}
-
-      </div>
-
-      <div class="history-bar-bg">
-        <div
-          class="history-bar"
-          style="width:${record.percent}%">
-        </div>
-      </div>
-
-    `;
-
-    list.appendChild(item);
-
-  });
-
-}
-
-
-/* 删除历史 */
-
-function clearHistory() {
-
-  const ok =
-    confirm(
-      "すべての学習記録を削除しますか？"
-    );
-
-  if (!ok) return;
-
-  localStorage.removeItem(
-    historyKey
-  );
-
-  /*
-   今天仍然存在，所以重新建立今天记录
-  */
-
-  saveTodayRecord();
-
-}
-
-
-/* =========================
-   启动
-========================= */
-
-renderTasks();
-updateTimerDisplay();
-saveTodayRecord();
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
