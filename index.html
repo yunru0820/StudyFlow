@@ -4,183 +4,697 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>StudyFlow</title>
+<title>StudyFlow｜学習管理</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f5f7fb;
-    margin: 0;
-    padding: 30px 15px;
-    color: #222;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  background: #f4f6f8;
+  color: #222;
+}
+
+header {
+  background: #ffffff;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+header p {
+  margin: 7px 0 0;
+  color: #666;
+  font-size: 14px;
 }
 
 .container {
-    max-width: 650px;
-    margin: auto;
-}
-
-h1 {
-    text-align: center;
+  max-width: 650px;
+  margin: auto;
+  padding: 18px;
 }
 
 .card {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
 }
 
-.task {
-    display: block;
-    font-size: 18px;
-    margin: 15px 0;
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+/* 进度 */
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .progress-bg {
-    width: 100%;
-    height: 15px;
-    background: #ddd;
-    border-radius: 10px;
-    overflow: hidden;
+  width: 100%;
+  height: 14px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 #progressBar {
-    height: 100%;
-    width: 0%;
-    background: #4CAF50;
-    transition: 0.3s;
+  width: 0%;
+  height: 100%;
+  background: #333;
+  transition: width 0.3s;
 }
 
-#timer {
-    font-size: 42px;
-    margin: 20px 0;
+/* 添加任务 */
+
+.add-area {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+#taskInput {
+  flex: 1;
+  padding: 11px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
 button {
-    padding: 10px 16px;
-    margin-right: 6px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-btn {
+  background: #222;
+  color: white;
+}
+
+/* 任务 */
+
+.task {
+  display: flex;
+  align-items: center;
+  padding: 12px 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.task:last-child {
+  border-bottom: none;
+}
+
+.task input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+.task-name {
+  flex: 1;
+  font-size: 16px;
+}
+
+.task.completed .task-name {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.delete-btn {
+  background: transparent;
+  color: #999;
+  font-size: 18px;
+  padding: 5px 10px;
+}
+
+/* Timer */
+
+.timer {
+  font-size: 42px;
+  text-align: center;
+  font-weight: bold;
+  margin: 20px 0;
+  letter-spacing: 2px;
+}
+
+.timer-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.start {
+  background: #222;
+  color: white;
+}
+
+.pause {
+  background: #ddd;
+}
+
+.reset {
+  background: #eee;
+}
+
+/* 今日学习时间 */
+
+.total-time {
+  text-align: center;
+  margin-top: 18px;
+  color: #555;
+}
+
+.date {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.empty {
+  color: #999;
+  text-align: center;
+  padding: 15px;
 }
 </style>
 </head>
 
+
 <body>
+
+<header>
+  <h1>StudyFlow</h1>
+  <p>高校生のための学習計画・記録</p >
+</header>
+
 
 <div class="container">
 
-<h1>📚 StudyFlow</h1>
+  <!-- 今日进度 -->
 
-<div class="card">
+  <div class="card">
 
-<h2>今日の進捗</h2>
+    <h2>📊 今日の進捗</h2>
 
-<p>完了タスク：<span id="doneCount">0</span>/4</p >
-<p>達成率：<span id="percent">0</span>%</p >
+    <div class="date" id="todayDate"></div>
 
-<div class="progress-bg">
-    <div id="progressBar"></div>
-</div>
+    <div class="progress-info">
+      <span>
+        完了：
+        <strong id="doneCount">0</strong>
+        /
+        <strong id="totalCount">0</strong>
+      </span>
 
-<label class="task">
-<input type="checkbox" class="taskCheck"> 数学
-</label>
+      <span>
+        <strong id="rate">0</strong>%
+      </span>
+    </div>
 
-<label class="task">
-<input type="checkbox" class="taskCheck"> 英語
-</label>
+    <div class="progress-bg">
+      <div id="progressBar"></div>
+    </div>
 
-<label class="task">
-<input type="checkbox" class="taskCheck"> 物理
-</label>
-
-<label class="task">
-<input type="checkbox" class="taskCheck"> 化学
-</label>
-
-</div>
+  </div>
 
 
-<div class="card">
+  <!-- 学习任务 -->
 
-<h2>⏱ 学習タイマー</h2>
+  <div class="card">
 
-<div id="timer">00:00:00</div>
+    <h2>📚 今日の学習</h2>
 
-<button onclick="startTimer()">スタート</button>
-<button onclick="pauseTimer()">一時停止</button>
-<button onclick="resetTimer()">リセット</button>
+    <div class="add-area">
 
-</div>
+      <input
+        id="taskInput"
+        type="text"
+        placeholder="例：数学 プラチカ10問"
+      >
+
+      <button
+        class="add-btn"
+        onclick="addTask()">
+        追加
+      </button>
+
+    </div>
+
+    <div id="taskList"></div>
+
+  </div>
+
+
+  <!-- 学习计时 -->
+
+  <div class="card">
+
+    <h2>⏱ 学習タイマー</h2>
+
+    <div
+      class="timer"
+      id="timer">
+      00:00:00
+    </div>
+
+    <div class="timer-buttons">
+
+      <button
+        class="start"
+        onclick="startTimer()">
+        開始
+      </button>
+
+      <button
+        class="pause"
+        onclick="pauseTimer()">
+        一時停止
+      </button>
+
+      <button
+        class="reset"
+        onclick="resetTimer()">
+        リセット
+      </button>
+
+    </div>
+
+    <div class="total-time">
+      今日の学習時間：
+      <strong id="studyTime">
+        0分
+      </strong>
+    </div>
+
+  </div>
 
 </div>
 
 
 <script>
 
-const tasks = document.querySelectorAll(".taskCheck");
+/* =========================
+   日期
+========================= */
 
-tasks.forEach(task => {
-    task.addEventListener("change", updateProgress);
-});
+const today = new Date();
+
+const dateKey =
+  today.getFullYear() + "-" +
+  (today.getMonth() + 1) + "-" +
+  today.getDate();
+
+document.getElementById("todayDate").textContent =
+  today.toLocaleDateString(
+    "ja-JP",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short"
+    }
+  );
+
+
+/* =========================
+   学习任务
+========================= */
+
+const taskStorageKey =
+  "studyflow_tasks_" + dateKey;
+
+let tasks =
+  JSON.parse(
+    localStorage.getItem(taskStorageKey)
+  ) || [];
+
+
+/* 第一次打开时的默认任务 */
+
+if (tasks.length === 0) {
+
+  tasks = [
+    {
+      name: "数学",
+      completed: false
+    },
+    {
+      name: "英語",
+      completed: false
+    },
+    {
+      name: "物理",
+      completed: false
+    },
+    {
+      name: "化学",
+      completed: false
+    }
+  ];
+
+  saveTasks();
+}
+
+
+/* 保存 */
+
+function saveTasks() {
+
+  localStorage.setItem(
+    taskStorageKey,
+    JSON.stringify(tasks)
+  );
+
+}
+
+
+/* 显示任务 */
+
+function renderTasks() {
+
+  const list =
+    document.getElementById("taskList");
+
+  list.innerHTML = "";
+
+  if (tasks.length === 0) {
+
+    list.innerHTML =
+      '<div class="empty">学習予定を追加してください</div>';
+
+  }
+
+  tasks.forEach((task, index) => {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "task" +
+      (task.completed
+        ? " completed"
+        : "");
+
+    div.innerHTML = `
+      <input
+        type="checkbox"
+        ${task.completed ? "checked" : ""}
+        onchange="toggleTask(${index})"
+      >
+
+      <span class="task-name">
+        ${escapeHTML(task.name)}
+      </span>
+
+      <button
+        class="delete-btn"
+        onclick="deleteTask(${index})">
+        ×
+      </button>
+    `;
+
+    list.appendChild(div);
+
+  });
+
+  updateProgress();
+
+}
+
+
+/* 添加任务 */
+
+function addTask() {
+
+  const input =
+    document.getElementById("taskInput");
+
+  const name =
+    input.value.trim();
+
+  if (!name) return;
+
+  tasks.push({
+    name: name,
+    completed: false
+  });
+
+  input.value = "";
+
+  saveTasks();
+  renderTasks();
+
+}
+
+
+/* 回车添加 */
+
+document
+  .getElementById("taskInput")
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+        addTask();
+      }
+
+    }
+  );
+
+
+/* 勾选 */
+
+function toggleTask(index) {
+
+  tasks[index].completed =
+    !tasks[index].completed;
+
+  saveTasks();
+  renderTasks();
+
+}
+
+
+/* 删除 */
+
+function deleteTask(index) {
+
+  tasks.splice(index, 1);
+
+  saveTasks();
+  renderTasks();
+
+}
+
+
+/* 计算进度 */
 
 function updateProgress() {
 
-    let done = 0;
+  const total =
+    tasks.length;
 
-    tasks.forEach(task => {
-        if(task.checked) done++;
-    });
+  const done =
+    tasks.filter(
+      task => task.completed
+    ).length;
 
-    const percent = done * 25;
+  const percent =
+    total === 0
+      ? 0
+      : Math.round(
+          done / total * 100
+        );
 
-    document.getElementById("doneCount").textContent = done;
-    document.getElementById("percent").textContent = percent;
-    document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById(
+    "doneCount"
+  ).textContent = done;
+
+  document.getElementById(
+    "totalCount"
+  ).textContent = total;
+
+  document.getElementById(
+    "rate"
+  ).textContent = percent;
+
+  document.getElementById(
+    "progressBar"
+  ).style.width =
+    percent + "%";
+
 }
 
 
-let seconds = 0;
+/* 防止输入HTML代码 */
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+
+}
+
+
+/* =========================
+   Timer
+========================= */
+
+const timerStorageKey =
+  "studyflow_time_" + dateKey;
+
+let seconds =
+  Number(
+    localStorage.getItem(
+      timerStorageKey
+    )
+  ) || 0;
+
 let timerInterval = null;
 
-function showTime() {
 
-    const h = String(Math.floor(seconds / 3600)).padStart(2,"0");
-    const m = String(Math.floor((seconds % 3600) / 60)).padStart(2,"0");
-    const s = String(seconds % 60).padStart(2,"0");
+/* 显示时间 */
 
-    document.getElementById("timer").textContent =
-        h + ":" + m + ":" + s;
+function updateTimerDisplay() {
+
+  const hours =
+    Math.floor(seconds / 3600);
+
+  const minutes =
+    Math.floor(
+      (seconds % 3600) / 60
+    );
+
+  const secs =
+    seconds % 60;
+
+  document.getElementById(
+    "timer"
+  ).textContent =
+    String(hours).padStart(2, "0")
+    + ":" +
+    String(minutes).padStart(2, "0")
+    + ":" +
+    String(secs).padStart(2, "0");
+
+  updateStudyTime();
+
 }
+
+
+/* 开始 */
 
 function startTimer() {
 
-    if(timerInterval !== null) return;
+  if (timerInterval) return;
 
-    timerInterval = setInterval(() => {
-        seconds++;
-        showTime();
-    },1000);
+  timerInterval =
+    setInterval(() => {
+
+      seconds++;
+
+      localStorage.setItem(
+        timerStorageKey,
+        seconds
+      );
+
+      updateTimerDisplay();
+
+    }, 1000);
+
 }
+
+
+/* 暂停 */
 
 function pauseTimer() {
 
-    clearInterval(timerInterval);
-    timerInterval = null;
+  clearInterval(timerInterval);
+
+  timerInterval = null;
+
 }
+
+
+/* 重置 */
 
 function resetTimer() {
 
-    clearInterval(timerInterval);
-    timerInterval = null;
+  const ok =
+    confirm(
+      "今日の学習時間をリセットしますか？"
+    );
 
-    seconds = 0;
-    showTime();
+  if (!ok) return;
+
+  pauseTimer();
+
+  seconds = 0;
+
+  localStorage.setItem(
+    timerStorageKey,
+    0
+  );
+
+  updateTimerDisplay();
+
 }
+
+
+/* 今日学习时间 */
+
+function updateStudyTime() {
+
+  const hours =
+    Math.floor(seconds / 3600);
+
+  const minutes =
+    Math.floor(
+      (seconds % 3600) / 60
+    );
+
+  let text = "";
+
+  if (hours > 0) {
+    text += hours + "時間 ";
+  }
+
+  text += minutes + "分";
+
+  document.getElementById(
+    "studyTime"
+  ).textContent = text;
+
+}
+
+
+/* =========================
+   页面启动
+========================= */
+
+renderTasks();
+updateTimerDisplay();
 
 </script>
 
