@@ -20,7 +20,7 @@ body {
 }
 
 header {
-  background: #ffffff;
+  background: white;
   padding: 20px;
   text-align: center;
   border-bottom: 1px solid #ddd;
@@ -56,6 +56,12 @@ h2 {
   font-size: 20px;
 }
 
+.date {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
 /* 进度 */
 
 .progress-info {
@@ -89,6 +95,7 @@ h2 {
 
 #taskInput {
   flex: 1;
+  min-width: 0;
   padding: 11px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -140,8 +147,14 @@ button {
 .delete-btn {
   background: transparent;
   color: #999;
-  font-size: 18px;
+  font-size: 20px;
   padding: 5px 10px;
+}
+
+.empty {
+  color: #999;
+  text-align: center;
+  padding: 15px;
 }
 
 /* Timer */
@@ -158,6 +171,7 @@ button {
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .start {
@@ -173,28 +187,71 @@ button {
   background: #eee;
 }
 
-/* 今日学习时间 */
-
 .total-time {
   text-align: center;
   margin-top: 18px;
   color: #555;
 }
 
-.date {
-  color: #777;
-  font-size: 14px;
-  margin-bottom: 15px;
+/* 历史记录 */
+
+.history-item {
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
 }
 
-.empty {
-  color: #999;
-  text-align: center;
-  padding: 15px;
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+.history-date {
+  font-weight: bold;
+}
+
+.history-rate {
+  font-weight: bold;
+}
+
+.history-detail {
+  color: #666;
+  font-size: 14px;
+}
+
+.history-bar-bg {
+  width: 100%;
+  height: 7px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 9px;
+}
+
+.history-bar {
+  height: 100%;
+  background: #333;
+}
+
+.clear-history {
+  width: 100%;
+  margin-top: 15px;
+  background: #eee;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+  .timer {
+    font-size: 35px;
+  }
 }
 </style>
 </head>
-
 
 <body>
 
@@ -202,7 +259,6 @@ button {
   <h1>StudyFlow</h1>
   <p>高校生のための学習計画・記録</p >
 </header>
-
 
 <div class="container">
 
@@ -234,7 +290,7 @@ button {
   </div>
 
 
-  <!-- 学习任务 -->
+  <!-- 今日任务 -->
 
   <div class="card">
 
@@ -248,9 +304,7 @@ button {
         placeholder="例：数学 プラチカ10問"
       >
 
-      <button
-        class="add-btn"
-        onclick="addTask()">
+      <button class="add-btn" onclick="addTask()">
         追加
       </button>
 
@@ -261,35 +315,27 @@ button {
   </div>
 
 
-  <!-- 学习计时 -->
+  <!-- Timer -->
 
   <div class="card">
 
     <h2>⏱ 学習タイマー</h2>
 
-    <div
-      class="timer"
-      id="timer">
+    <div class="timer" id="timer">
       00:00:00
     </div>
 
     <div class="timer-buttons">
 
-      <button
-        class="start"
-        onclick="startTimer()">
+      <button class="start" onclick="startTimer()">
         開始
       </button>
 
-      <button
-        class="pause"
-        onclick="pauseTimer()">
+      <button class="pause" onclick="pauseTimer()">
         一時停止
       </button>
 
-      <button
-        class="reset"
-        onclick="resetTimer()">
+      <button class="reset" onclick="resetTimer()">
         リセット
       </button>
 
@@ -297,10 +343,25 @@ button {
 
     <div class="total-time">
       今日の学習時間：
-      <strong id="studyTime">
-        0分
-      </strong>
+      <strong id="studyTime">0分</strong>
     </div>
+
+  </div>
+
+
+  <!-- 历史 -->
+
+  <div class="card">
+
+    <h2>📅 学習記録</h2>
+
+    <div id="historyList"></div>
+
+    <button
+      class="clear-history"
+      onclick="clearHistory()">
+      学習記録を削除
+    </button>
 
   </div>
 
@@ -333,7 +394,7 @@ document.getElementById("todayDate").textContent =
 
 
 /* =========================
-   学习任务
+   今日任务
 ========================= */
 
 const taskStorageKey =
@@ -345,34 +406,22 @@ let tasks =
   ) || [];
 
 
-/* 第一次打开时的默认任务 */
+/* 今天没有数据时创建默认任务 */
 
 if (tasks.length === 0) {
 
   tasks = [
-    {
-      name: "数学",
-      completed: false
-    },
-    {
-      name: "英語",
-      completed: false
-    },
-    {
-      name: "物理",
-      completed: false
-    },
-    {
-      name: "化学",
-      completed: false
-    }
+    { name: "数学", completed: false },
+    { name: "英語", completed: false },
+    { name: "物理", completed: false },
+    { name: "化学", completed: false }
   ];
 
   saveTasks();
 }
 
 
-/* 保存 */
+/* 保存任务 */
 
 function saveTasks() {
 
@@ -381,6 +430,7 @@ function saveTasks() {
     JSON.stringify(tasks)
   );
 
+  saveTodayRecord();
 }
 
 
@@ -407,9 +457,7 @@ function renderTasks() {
 
     div.className =
       "task" +
-      (task.completed
-        ? " completed"
-        : "");
+      (task.completed ? " completed" : "");
 
     div.innerHTML = `
       <input
@@ -438,7 +486,7 @@ function renderTasks() {
 }
 
 
-/* 添加任务 */
+/* 添加 */
 
 function addTask() {
 
@@ -463,7 +511,7 @@ function addTask() {
 }
 
 
-/* 回车添加 */
+/* Enter添加 */
 
 document
   .getElementById("taskInput")
@@ -479,7 +527,7 @@ document
   );
 
 
-/* 勾选 */
+/* 完成 */
 
 function toggleTask(index) {
 
@@ -504,7 +552,7 @@ function deleteTask(index) {
 }
 
 
-/* 计算进度 */
+/* 进度 */
 
 function updateProgress() {
 
@@ -519,9 +567,7 @@ function updateProgress() {
   const percent =
     total === 0
       ? 0
-      : Math.round(
-          done / total * 100
-        );
+      : Math.round(done / total * 100);
 
   document.getElementById(
     "doneCount"
@@ -543,7 +589,7 @@ function updateProgress() {
 }
 
 
-/* 防止输入HTML代码 */
+/* 安全显示文字 */
 
 function escapeHTML(text) {
 
@@ -566,15 +612,11 @@ const timerStorageKey =
 
 let seconds =
   Number(
-    localStorage.getItem(
-      timerStorageKey
-    )
+    localStorage.getItem(timerStorageKey)
   ) || 0;
 
 let timerInterval = null;
 
-
-/* 显示时间 */
 
 function updateTimerDisplay() {
 
@@ -582,9 +624,7 @@ function updateTimerDisplay() {
     Math.floor(seconds / 3600);
 
   const minutes =
-    Math.floor(
-      (seconds % 3600) / 60
-    );
+    Math.floor((seconds % 3600) / 60);
 
   const secs =
     seconds % 60;
@@ -603,8 +643,6 @@ function updateTimerDisplay() {
 }
 
 
-/* 开始 */
-
 function startTimer() {
 
   if (timerInterval) return;
@@ -621,12 +659,14 @@ function startTimer() {
 
       updateTimerDisplay();
 
+      if (seconds % 5 === 0) {
+        saveTodayRecord();
+      }
+
     }, 1000);
 
 }
 
-
-/* 暂停 */
 
 function pauseTimer() {
 
@@ -634,10 +674,10 @@ function pauseTimer() {
 
   timerInterval = null;
 
+  saveTodayRecord();
+
 }
 
-
-/* 重置 */
 
 function resetTimer() {
 
@@ -658,11 +698,10 @@ function resetTimer() {
   );
 
   updateTimerDisplay();
+  saveTodayRecord();
 
 }
 
-
-/* 今日学习时间 */
 
 function updateStudyTime() {
 
@@ -670,9 +709,7 @@ function updateStudyTime() {
     Math.floor(seconds / 3600);
 
   const minutes =
-    Math.floor(
-      (seconds % 3600) / 60
-    );
+    Math.floor((seconds % 3600) / 60);
 
   let text = "";
 
@@ -690,11 +727,217 @@ function updateStudyTime() {
 
 
 /* =========================
-   页面启动
+   学习历史
+========================= */
+
+const historyKey =
+  "studyflow_history";
+
+
+function getHistory() {
+
+  return JSON.parse(
+    localStorage.getItem(historyKey)
+  ) || {};
+
+}
+
+
+/* 保存今天的数据到历史 */
+
+function saveTodayRecord() {
+
+  if (typeof tasks === "undefined") {
+    return;
+  }
+
+  const history =
+    getHistory();
+
+  const total =
+    tasks.length;
+
+  const done =
+    tasks.filter(
+      task => task.completed
+    ).length;
+
+  const percent =
+    total === 0
+      ? 0
+      : Math.round(done / total * 100);
+
+  history[dateKey] = {
+    date: dateKey,
+    total: total,
+    done: done,
+    percent: percent,
+    seconds: typeof seconds !== "undefined"
+      ? seconds
+      : Number(
+          localStorage.getItem(
+            "studyflow_time_" + dateKey
+          )
+        ) || 0
+  };
+
+  localStorage.setItem(
+    historyKey,
+    JSON.stringify(history)
+  );
+
+  renderHistory();
+
+}
+
+
+/* 时间转换 */
+
+function formatHistoryTime(totalSeconds) {
+
+  const hours =
+    Math.floor(totalSeconds / 3600);
+
+  const minutes =
+    Math.floor(
+      (totalSeconds % 3600) / 60
+    );
+
+  if (hours > 0) {
+    return hours + "時間" + minutes + "分";
+  }
+
+  return minutes + "分";
+
+}
+
+
+/* 日期显示 */
+
+function formatHistoryDate(key) {
+
+  const parts =
+    key.split("-");
+
+  return (
+    Number(parts[1]) +
+    "月" +
+    Number(parts[2]) +
+    "日"
+  );
+
+}
+
+
+/* 显示历史 */
+
+function renderHistory() {
+
+  const history =
+    getHistory();
+
+  const list =
+    document.getElementById(
+      "historyList"
+    );
+
+  list.innerHTML = "";
+
+  const records =
+    Object.values(history)
+      .sort((a, b) =>
+        b.date.localeCompare(a.date)
+      );
+
+  if (records.length === 0) {
+
+    list.innerHTML =
+      '<div class="empty">まだ学習記録がありません</div>';
+
+    return;
+  }
+
+
+  records.forEach(record => {
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "history-item";
+
+    item.innerHTML = `
+
+      <div class="history-top">
+
+        <span class="history-date">
+          ${formatHistoryDate(record.date)}
+        </span>
+
+        <span class="history-rate">
+          ${record.percent}%
+        </span>
+
+      </div>
+
+      <div class="history-detail">
+
+        ${record.done}/${record.total} 完了
+
+        ・
+
+        学習時間
+        ${formatHistoryTime(record.seconds)}
+
+      </div>
+
+      <div class="history-bar-bg">
+        <div
+          class="history-bar"
+          style="width:${record.percent}%">
+        </div>
+      </div>
+
+    `;
+
+    list.appendChild(item);
+
+  });
+
+}
+
+
+/* 删除历史 */
+
+function clearHistory() {
+
+  const ok =
+    confirm(
+      "すべての学習記録を削除しますか？"
+    );
+
+  if (!ok) return;
+
+  localStorage.removeItem(
+    historyKey
+  );
+
+  /*
+   今天仍然存在，所以重新建立今天记录
+  */
+
+  saveTodayRecord();
+
+}
+
+
+/* =========================
+   启动
 ========================= */
 
 renderTasks();
 updateTimerDisplay();
+saveTodayRecord();
 
 </script>
 
