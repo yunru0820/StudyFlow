@@ -1,526 +1,2077 @@
-<!DOCTYPE html>
-<html lang="ja">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyFlow｜学習管理</title>
 
-  <meta
-    name="description"
-    content="StudyFlow - 高校生のためのシンプルな学習計画・記録サイト"
-  >
+<style>
+*{
+  box-sizing:border-box;
+}
 
-  <title>StudyFlow｜学習計画・記録</title>
+:root{
+  --bg:#e9edf5;
+  --white:#ffffff;
+  --text:#1d2340;
+  --muted:#9298aa;
+  --line:#edf0f5;
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  --orange:#ff6847;
+  --orange-light:#fff0eb;
+
+  --purple:#7775bb;
+  --purple-light:#eeeeff;
+
+  --green:#57c9a0;
+  --green-light:#e8f8f2;
+
+  --yellow:#f2c44f;
+  --yellow-light:#fff7db;
+
+  --blue:#68c5df;
+  --blue-light:#e9f8fc;
+
+  --pink:#ee8d94;
+  --pink-light:#fff0f2;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+}
+
+
+/* =========================
+   APP
+========================= */
+
+.app{
+  width:calc(100% - 56px);
+  max-width:1450px;
+  min-height:calc(100vh - 56px);
+
+  margin:28px auto;
+
+  display:grid;
+  grid-template-columns:190px 1fr;
+
+  background:white;
+
+  border-radius:28px;
+  overflow:hidden;
+
+  box-shadow:
+    0 25px 70px rgba(45,55,90,.10);
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+  background:#fafbfe;
+
+  border-right:1px solid var(--line);
+
+  padding:38px 20px;
+
+  display:flex;
+  flex-direction:column;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  font-size:23px;
+  font-weight:750;
+
+  margin:0 10px 42px;
+}
+
+.logo-mark{
+  width:22px;
+  height:22px;
+
+  position:relative;
+}
+
+.logo-mark span{
+  position:absolute;
+
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+}
+
+.logo-mark span:nth-child(1){
+  background:var(--orange);
+  left:0;
+  top:0;
+}
+
+.logo-mark span:nth-child(2){
+  background:var(--yellow);
+  right:0;
+  top:0;
+}
+
+.logo-mark span:nth-child(3){
+  background:var(--green);
+  left:0;
+  bottom:0;
+}
+
+.logo-mark span:nth-child(4){
+  background:var(--purple);
+  right:0;
+  bottom:0;
+}
+
+.logo-mark span:nth-child(5){
+  background:var(--pink);
+  left:8px;
+  top:8px;
+}
+
+
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.menu a{
+  text-decoration:none;
+
+  color:#858b9e;
+
+  padding:13px 14px;
+
+  border-radius:12px;
+
+  font-size:13px;
+
+  transition:.2s;
+}
+
+.menu a:hover,
+.menu a.active{
+  background:white;
+
+  color:var(--text);
+
+  box-shadow:
+    0 6px 20px rgba(45,55,90,.06);
+}
+
+.menu-icon{
+  display:inline-block;
+
+  width:25px;
+
+  color:var(--orange);
+}
+
+
+.sidebar-bottom{
+  margin-top:auto;
+
+  color:#a1a6b4;
+
+  font-size:11px;
+
+  padding:20px 12px 0;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+  padding:45px 48px 70px;
+
+  min-width:0;
+}
+
+section{
+  margin-bottom:52px;
+
+  scroll-margin-top:20px;
+}
+
+
+/* =========================
+   TOP
+========================= */
+
+.topbar{
+  display:flex;
+
+  justify-content:space-between;
+  align-items:center;
+
+  margin-bottom:30px;
+}
+
+.hello{
+  font-size:17px;
+}
+
+.today{
+  color:var(--muted);
+  font-size:12px;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  position:relative;
+
+  display:flex;
+
+  justify-content:space-between;
+  align-items:center;
+
+  padding:20px 0 35px;
+
+  border-bottom:1px solid var(--line);
+
+  margin-bottom:25px;
+}
+
+.hero h1{
+  margin:0 0 10px;
+
+  font-size:34px;
+  font-weight:500;
+
+  letter-spacing:-1.2px;
+}
+
+.hero p{
+  margin:0;
+
+  color:var(--muted);
+
+  font-size:13px;
+}
+
+.hero-art{
+  position:relative;
+
+  width:115px;
+  height:115px;
+}
+
+.circle{
+  position:absolute;
+
+  border-radius:50%;
+}
+
+.circle.one{
+  width:70px;
+  height:70px;
+
+  background:var(--orange);
+
+  right:10px;
+  top:10px;
+
+  box-shadow:
+    0 14px 30px rgba(255,104,71,.25);
+}
+
+.circle.two{
+  width:30px;
+  height:30px;
+
+  background:var(--yellow);
+
+  left:4px;
+  bottom:10px;
+}
+
+.circle.three{
+  width:23px;
+  height:23px;
+
+  background:var(--green);
+
+  right:0;
+  bottom:3px;
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary{
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:14px;
+}
+
+.summary-card{
+  min-height:135px;
+
+  padding:20px;
+
+  border:1px solid var(--line);
+
+  border-radius:18px;
+
+  position:relative;
+
+  overflow:hidden;
+}
+
+.summary-card:nth-child(1){
+  background:
+    linear-gradient(
+      135deg,
+      white,
+      var(--purple-light)
+    );
+}
+
+.summary-card:nth-child(2){
+  background:
+    linear-gradient(
+      135deg,
+      white,
+      var(--yellow-light)
+    );
+}
+
+.summary-card:nth-child(3){
+  background:
+    linear-gradient(
+      135deg,
+      white,
+      var(--green-light)
+    );
+}
+
+.summary-card:nth-child(4){
+  background:
+    linear-gradient(
+      135deg,
+      white,
+      var(--orange-light)
+    );
+}
+
+.summary-label{
+  color:#747a8e;
+
+  font-size:12px;
+  font-weight:600;
+}
+
+.summary-value{
+  font-size:27px;
+
+  font-weight:750;
+
+  margin-top:12px;
+}
+
+.summary-small{
+  color:var(--muted);
+
+  font-size:11px;
+
+  margin-top:4px;
+}
+
+.progress{
+  height:7px;
+
+  background:rgba(255,255,255,.75);
+
+  border-radius:10px;
+
+  margin-top:13px;
+
+  overflow:hidden;
+}
+
+.progress-inner{
+  height:100%;
+
+  width:0;
+
+  border-radius:10px;
+
+  background:var(--purple);
+
+  transition:.3s;
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
+.section-head{
+  display:flex;
+
+  justify-content:space-between;
+  align-items:flex-end;
+
+  margin-bottom:17px;
+}
+
+.section-title{
+  margin:0;
+
+  font-size:18px;
+}
+
+.section-desc{
+  margin:5px 0 0;
+
+  color:var(--muted);
+
+  font-size:11px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+  border:1px solid var(--line);
+
+  border-radius:18px;
+
+  background:white;
+
+  padding:20px;
+
+  box-shadow:
+    0 8px 28px rgba(45,55,90,.04);
+}
+
+
+/* =========================
+   TASK FORM
+========================= */
+
+.task-form{
+  display:grid;
+
+  grid-template-columns:
+    120px 1fr 100px 125px 75px;
+
+  gap:8px;
+
+  padding-bottom:18px;
+
+  border-bottom:1px solid var(--line);
+}
+
+input,
+select{
+  width:100%;
+
+  height:41px;
+
+  padding:0 11px;
+
+  border:1px solid #e5e8ef;
+
+  border-radius:9px;
+
+  background:white;
+
+  color:var(--text);
+
+  font-size:12px;
+
+  outline:none;
+}
+
+input:focus,
+select:focus{
+  border-color:#ffab96;
+
+  box-shadow:
+    0 0 0 3px var(--orange-light);
+}
+
+button{
+  border:0;
+
+  border-radius:9px;
+
+  padding:10px 14px;
+
+  cursor:pointer;
+
+  font-weight:600;
+
+  font-size:12px;
+}
+
+.primary{
+  background:var(--orange);
+
+  color:white;
+
+  box-shadow:
+    0 7px 15px rgba(255,104,71,.20);
+}
+
+.soft{
+  background:#f4f5f8;
+
+  color:#777d90;
+}
+
+
+/* =========================
+   TASKS
+========================= */
+
+.task-list{
+  margin-top:4px;
+}
+
+.task{
+  display:grid;
+
+  grid-template-columns:
+    28px 85px 1fr 70px 85px 30px;
+
+  align-items:center;
+
+  gap:10px;
+
+  min-height:58px;
+
+  border-bottom:1px solid var(--line);
+}
+
+.task:last-child{
+  border-bottom:0;
+}
+
+.check{
+  appearance:none;
+
+  width:17px;
+  height:17px;
+
+  border:1.5px solid #d6dae5;
+
+  border-radius:4px;
+
+  padding:0;
+
+  cursor:pointer;
+}
+
+.check:checked{
+  background:var(--orange);
+
+  border-color:var(--orange);
+}
+
+.check:checked::after{
+  content:"✓";
+
+  color:white;
+
+  display:flex;
+
+  justify-content:center;
+  align-items:center;
+
+  font-size:11px;
+}
+
+.subject{
+  width:max-content;
+
+  max-width:80px;
+
+  padding:5px 10px;
+
+  border-radius:7px;
+
+  font-size:11px;
+
+  font-weight:650;
+}
+
+.subject.math{
+  background:var(--purple-light);
+  color:var(--purple);
+}
+
+.subject.english{
+  background:var(--pink-light);
+  color:#df7078;
+}
+
+.subject.physics{
+  background:var(--blue-light);
+  color:#3ba6c4;
+}
+
+.subject.chemistry{
+  background:var(--green-light);
+  color:#36a67e;
+}
+
+.subject.japanese{
+  background:var(--yellow-light);
+  color:#bd9222;
+}
+
+.subject.info{
+  background:var(--orange-light);
+  color:var(--orange);
+}
+
+.subject.other{
+  background:#f1f2f5;
+  color:#777;
+}
+
+.task-content{
+  font-size:13px;
+  font-weight:500;
+}
+
+.task-meta{
+  color:var(--muted);
+
+  font-size:11px;
+}
+
+.delete{
+  background:transparent;
+
+  color:#b5b8c3;
+
+  padding:5px;
+}
+
+.task.done{
+  opacity:.55;
+}
+
+.task.done .task-content{
+  text-decoration:line-through;
+}
+
+.empty{
+  padding:35px 10px;
+
+  text-align:center;
+
+  color:#afb3bf;
+
+  font-size:12px;
+}
+
+
+/* =========================
+   TWO COLUMNS
+========================= */
+
+.two-columns{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:16px;
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+.timer-card{
+  text-align:center;
+}
+
+.timer-select{
+  max-width:260px;
+
+  margin-bottom:15px;
+}
+
+.timer-circle{
+  width:205px;
+  height:205px;
+
+  margin:18px auto;
+
+  border-radius:50%;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  background:
+    radial-gradient(
+      circle,
+      white 64%,
+      transparent 65%
+    ),
+    conic-gradient(
+      var(--orange) 0 22%,
+      var(--yellow) 22% 42%,
+      var(--green) 42% 65%,
+      var(--purple) 65% 100%
+    );
+
+  box-shadow:
+    0 12px 32px rgba(45,55,90,.08);
+}
+
+.timer-display{
+  font-size:30px;
+
+  font-weight:750;
+}
+
+.timer-status{
+  color:var(--muted);
+
+  font-size:11px;
+
+  margin-top:4px;
+}
+
+.timer-buttons{
+  display:flex;
+
+  justify-content:center;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+.history-row{
+  padding:14px 2px;
+
+  border-bottom:1px solid var(--line);
+}
+
+.history-row:last-child{
+  border-bottom:0;
+}
+
+.history-top{
+  display:flex;
+
+  justify-content:space-between;
+
+  font-size:12px;
+
+  font-weight:650;
+}
+
+.history-rate{
+  color:var(--orange);
+}
+
+.history-detail{
+  color:var(--muted);
+
+  font-size:11px;
+
+  margin-top:5px;
+}
+
+.history-bar{
+  height:6px;
+
+  margin-top:9px;
+
+  background:#f0f1f4;
+
+  border-radius:10px;
+
+  overflow:hidden;
+}
+
+.history-bar div{
+  height:100%;
+
+  border-radius:10px;
+
+  background:var(--green);
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:14px;
+
+  margin-bottom:14px;
+}
+
+.stat{
+  border:1px solid var(--line);
+
+  border-radius:16px;
+
+  padding:20px;
+}
+
+.stat:nth-child(1){
+  border-top:3px solid var(--purple);
+}
+
+.stat:nth-child(2){
+  border-top:3px solid var(--green);
+}
+
+.stat:nth-child(3){
+  border-top:3px solid var(--orange);
+}
+
+.stat-label{
+  color:var(--muted);
+
+  font-size:11px;
+}
+
+.stat-value{
+  font-size:24px;
+
+  font-weight:750;
+
+  margin-top:8px;
+}
+
+.subject-stat{
+  display:flex;
+
+  justify-content:space-between;
+
+  padding:12px 3px;
+
+  border-bottom:1px solid var(--line);
+
+  font-size:12px;
+}
+
+
+/* =========================
+   ABOUT
+========================= */
+
+.about{
+  color:#777d8e;
+
+  font-size:12px;
+
+  line-height:2;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:850px){
+
+  body{
+    background:white;
+  }
+
+  .app{
+    width:100%;
+
+    min-height:100vh;
+
+    margin:0;
+
+    display:block;
+
+    border-radius:0;
+
+    box-shadow:none;
+  }
+
+  .sidebar{
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    padding:13px 15px 10px;
+
+    border-right:0;
+
+    border-bottom:1px solid var(--line);
+  }
+
+  .logo{
+    margin:0 0 10px;
+
+    font-size:20px;
+  }
+
+  .menu{
+    flex-direction:row;
+
+    overflow-x:auto;
+
+    gap:5px;
+  }
+
+  .menu a{
+    white-space:nowrap;
+
+    padding:8px 10px;
+
+    background:#f7f8fb;
+
+    font-size:11px;
+  }
+
+  .menu-icon{
+    display:none;
+  }
+
+  .sidebar-bottom{
+    display:none;
+  }
+
+  .main{
+    padding:25px 15px 55px;
+  }
+
+  .topbar{
+    margin-bottom:20px;
+  }
+
+  .hero{
+    padding-top:5px;
+  }
+
+  .hero h1{
+    font-size:27px;
+
+    max-width:250px;
+  }
+
+  .hero-art{
+    width:75px;
+    height:75px;
+  }
+
+  .circle.one{
+    width:50px;
+    height:50px;
+  }
+
+  .circle.two{
+    width:20px;
+    height:20px;
+  }
+
+  .circle.three{
+    width:15px;
+    height:15px;
+  }
+
+  .summary{
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .task-form{
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .task-form .content-input{
+    grid-column:1/-1;
+  }
+
+  .task-form button{
+    grid-column:1/-1;
+  }
+
+  .task{
+    grid-template-columns:
+      25px 1fr 30px;
+
+    padding:11px 0;
+  }
+
+  .subject,
+  .task-content,
+  .task-meta{
+    grid-column:2;
+  }
+
+  .delete{
+    grid-column:3;
+
+    grid-row:1/5;
+  }
+
+  .two-columns{
+    grid-template-columns:1fr;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:480px){
+
+  .summary{
+    grid-template-columns:1fr 1fr;
+
+    gap:9px;
+  }
+
+  .summary-card{
+    min-height:120px;
+
+    padding:15px;
+  }
+
+  .summary-value{
+    font-size:23px;
+  }
+
+  .task-form{
+    grid-template-columns:1fr;
+  }
+
+  .task-form .content-input,
+  .task-form button{
+    grid-column:auto;
+  }
+}
+</style>
 </head>
+
 
 <body>
 
-<!-- =========================
-     Header
-========================= -->
+<div class="app">
 
-<header class="site-header">
+<!-- SIDEBAR -->
 
-  <nav class="nav">
+<aside class="sidebar">
 
-    <div class="logo">
-      StudyFlow
-    </div>
+  <div class="logo">
 
-    <div class="nav-links">
-      <a href=" ">ホーム</a >
-      <a href="#plan">学習計画</a >
-      <a href="#timer">タイマー</a >
-      <a href="#history">学習記録</a >
-      <a href="#stats">統計</a >
-    </div>
+    <div class="logo-mark">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
 
-  </nav>
+    StudyFlow
 
-</header>
+  </div>
 
 
-<main>
+  <nav class="menu">
 
-<!-- =========================
-     Home
-========================= -->
+    <a class="active" href="#home">
+      <span class="menu-icon">⌂</span>
+      ホーム
+    </a>
 
-<section id="home">
+    <a href="#plan">
+      <span class="menu-icon">☷</span>
+      学習計画
+    </a>
 
-  <div class="hero">
+    <a href="#timer">
+      <span class="menu-icon">◷</span>
+      タイマー
+    </a>
 
-    <div
-      class="hero-date"
-      id="todayDate">
-    </div>
+    <a href="#history">
+      <span class="menu-icon">▦</span>
+      学習記録
+    </a>
 
-    <h1>
-      今日も、自分のペースで。
-    </h1>
+    <a href="#stats">
+      <span class="menu-icon">◔</span>
+      統計
+    </a>
 
-    <p>
-      学習計画から記録まで、
-      StudyFlowでシンプルに管理。
-    </p >
-
-  </div>
-
-
-  <div class="grid">
-
-    <!-- 今日进度 -->
-
-    <div class="card">
-
-      <div class="card-title">
-        今日の達成率
-      </div>
-
-      <div
-        class="big-number"
-        id="todayProgress">
-        0%
-      </div>
-
-      <div
-        class="small-text"
-        id="progressDetail">
-        0 / 0 完了
-      </div>
-
-      <div class="progress-track">
-        <div
-          class="progress-bar"
-          id="progressBar">
-        </div>
-      </div>
-
-    </div>
+  </nav>
 
 
-    <!-- 计划时间 -->
+  <div class="sidebar-bottom">
+    Focus on your future.
+  </div>
 
-    <div class="card">
-
-      <div class="card-title">
-        今日の予定時間
-      </div>
-
-      <div
-        class="big-number"
-        id="plannedTime">
-        0分
-      </div>
-
-      <div class="small-text">
-        登録した学習予定
-      </div>
-
-    </div>
+</aside>
 
 
-    <!-- 实际时间 -->
+<!-- MAIN -->
 
-    <div class="card">
+<main class="main">
 
-      <div class="card-title">
-        今日の学習時間
-      </div>
+<section id="home">
 
-      <div
-        class="big-number"
-        id="actualTime">
-        0分
-      </div>
+  <div class="topbar">
 
-      <div class="small-text">
-        タイマーで記録
-      </div>
+    <div class="hello">
+      Hello, <strong>Student!</strong>
+    </div>
 
-    </div>
+    <div
+      class="today"
+      id="todayDate">
+    </div>
 
-  </div>
+  </div>
+
+
+  <div class="hero">
+
+    <div>
+
+      <h1>
+        今日も、自分のペースで。
+      </h1>
+
+      <p>
+        小さな積み重ねが、
+        大きな未来につながる。
+      </p>
+
+    </div>
+
+
+    <div class="hero-art">
+
+      <div class="circle one"></div>
+      <div class="circle two"></div>
+      <div class="circle three"></div>
+
+    </div>
+
+  </div>
+
+
+  <div class="summary">
+
+    <div class="summary-card">
+
+      <div class="summary-label">
+        今日の達成率
+      </div>
+
+      <div
+        class="summary-value"
+        id="todayRate">
+        0%
+      </div>
+
+      <div
+        class="summary-small"
+        id="todayDone">
+        0 / 0 完了
+      </div>
+
+      <div class="progress">
+        <div
+          class="progress-inner"
+          id="todayProgress">
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-label">
+        今日の予定時間
+      </div>
+
+      <div
+        class="summary-value"
+        id="plannedTime">
+        0分
+      </div>
+
+      <div class="summary-small">
+        登録した学習予定
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-label">
+        今日の学習時間
+      </div>
+
+      <div
+        class="summary-value"
+        id="todayTime">
+        0分
+      </div>
+
+      <div class="summary-small">
+        タイマーで記録
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-label">
+        連続学習日数
+      </div>
+
+      <div
+        class="summary-value"
+        id="streakTop">
+        0日
+      </div>
+
+      <div class="summary-small">
+        Keep going!
+      </div>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- =========================
-     Study Plan
-========================= -->
+<!-- PLAN -->
 
-<section id="plan">
+<section id="plan">
 
-  <h2 class="section-title">
-    学習計画
-  </h2>
+  <div class="section-head">
 
-  <p class="section-subtitle">
-    今日取り組む内容を登録しましょう。
-  </p >
+    <div>
 
+      <h2 class="section-title">
+        学習計画
+      </h2>
 
-  <div class="card">
+      <p class="section-desc">
+        今日取り組む内容を登録しましょう。
+      </p>
 
-    <div class="task-form">
+    </div>
 
-      <!-- 科目 -->
-
-      <select id="subjectInput">
-
-        <option value="数学">
-          数学
-        </option>
-
-        <option value="英語">
-          英語
-        </option>
-
-        <option value="物理">
-          物理
-        </option>
-
-        <option value="化学">
-          化学
-        </option>
-
-        <option value="国語">
-          国語
-        </option>
-
-        <option value="情報">
-          情報
-        </option>
-
-        <option value="その他">
-          その他
-        </option>
-
-      </select>
+  </div>
 
 
-      <!-- 内容 -->
+  <div class="card">
 
-      <input
-        class="task-content-input"
-        id="contentInput"
-        type="text"
-        maxlength="100"
-        placeholder="例：プラチカ 10問"
-      >
+    <div class="task-form">
 
-
-      <!-- 预计时间 -->
-
-      <input
-        id="minutesInput"
-        type="number"
-        min="0"
-        max="1440"
-        placeholder="予定(分)"
-      >
+      <select id="subjectInput">
+        <option>数学</option>
+        <option>英語</option>
+        <option>物理</option>
+        <option>化学</option>
+        <option>国語</option>
+        <option>情報</option>
+        <option>その他</option>
+      </select>
 
 
-      <!-- 优先度 -->
-
-      <select id="priorityInput">
-
-        <option value="高">
-          優先度：高
-        </option>
-
-        <option value="普通" selected>
-          優先度：普通
-        </option>
-
-        <option value="低">
-          優先度：低
-        </option>
-
-      </select>
+      <input
+        id="contentInput"
+        class="content-input"
+        maxlength="100"
+        placeholder="例：プラチカ 10問"
+      >
 
 
-      <button
-        class="primary-btn"
-        onclick="addTask()">
-        追加
-      </button>
+      <input
+        id="minutesInput"
+        type="number"
+        min="0"
+        max="1440"
+        placeholder="予定(分)"
+      >
 
-    </div>
+
+      <select id="priorityInput">
+        <option value="高">
+          優先度：高
+        </option>
+
+        <option value="普通" selected>
+          優先度：普通
+        </option>
+
+        <option value="低">
+          優先度：低
+        </option>
+      </select>
 
 
-    <div
-      class="task-list"
-      id="taskList">
-    </div>
+      <button
+        class="primary"
+        onclick="addTask()">
+        追加
+      </button>
 
-  </div>
+    </div>
+
+
+    <div
+      class="task-list"
+      id="taskList">
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- =========================
-     Timer
-========================= -->
+<!-- TIMER + HISTORY -->
 
-<section id="timer">
+<div class="two-columns">
 
-  <h2 class="section-title">
-    学習タイマー
-  </h2>
+<section id="timer">
 
-  <p class="section-subtitle">
-    実際の学習時間を記録できます。
-  </p >
+  <div class="section-head">
 
+    <div>
 
-  <div class="card timer-card">
+      <h2 class="section-title">
+        学習タイマー
+      </h2>
 
-    <select
-      class="timer-subject"
-      id="timerSubject">
+      <p class="section-desc">
+        学習時間を記録します。
+      </p>
 
-      <option value="数学">
-        数学を勉強する
-      </option>
+    </div>
 
-      <option value="英語">
-        英語を勉強する
-      </option>
-
-      <option value="物理">
-        物理を勉強する
-      </option>
-
-      <option value="化学">
-        化学を勉強する
-      </option>
-
-      <option value="国語">
-        国語を勉強する
-      </option>
-
-      <option value="情報">
-        情報を勉強する
-      </option>
-
-      <option value="その他">
-        その他
-      </option>
-
-    </select>
+  </div>
 
 
-    <div
-      class="small-text"
-      id="timerStatus">
-      準備完了
-    </div>
+  <div class="card timer-card">
+
+    <select
+      class="timer-select"
+      id="timerSubject">
+
+      <option>数学</option>
+      <option>英語</option>
+      <option>物理</option>
+      <option>化学</option>
+      <option>国語</option>
+      <option>情報</option>
+      <option>その他</option>
+
+    </select>
 
 
-    <div
-      class="timer-display"
-      id="timerDisplay">
-      00:00:00
-    </div>
+    <div class="timer-circle">
+
+      <div
+        class="timer-display"
+        id="timerDisplay">
+        00:00:00
+      </div>
+
+      <div
+        class="timer-status"
+        id="timerStatus">
+        準備完了
+      </div>
+
+    </div>
 
 
-    <div class="timer-actions">
+    <div class="timer-buttons">
 
-      <button
-        class="primary-btn"
-        onclick="startTimer()">
-        ▶ 開始
-      </button>
+      <button
+        class="primary"
+        onclick="startTimer()">
+        ▶ 開始
+      </button>
 
-      <button
-        class="secondary-btn"
-        onclick="pauseTimer()">
-        一時停止
-      </button>
+      <button
+        class="soft"
+        onclick="pauseTimer()">
+        一時停止
+      </button>
 
-      <button
-        class="secondary-btn"
-        onclick="resetTimer()">
-        リセット
-      </button>
+      <button
+        class="soft"
+        onclick="resetTimer()">
+        リセット
+      </button>
 
-    </div>
+    </div>
 
-  </div>
+  </div>
 
 </section>
 
 
-<!-- =========================
-     History
-========================= -->
+<section id="history">
 
-<section id="history">
+  <div class="section-head">
 
-  <h2 class="section-title">
-    学習記録
-  </h2>
+    <div>
 
-  <p class="section-subtitle">
-    最近の学習状況を確認できます。
-  </p >
+      <h2 class="section-title">
+        学習記録
+      </h2>
+
+      <p class="section-desc">
+        最近14日間
+      </p>
+
+    </div>
+
+  </div>
 
 
-  <div class="card">
+  <div class="card">
 
-    <div id="historyList">
+    <div id="historyList"></div>
 
-      <div class="empty-state">
-        まだ学習記録がありません。
-      </div>
+  </div>
 
-    </div>
+</section>
 
-  </div>
+</div>
+
+
+<!-- STATS -->
+
+<section id="stats">
+
+  <div class="section-head">
+
+    <div>
+
+      <h2 class="section-title">
+        学習統計
+      </h2>
+
+      <p class="section-desc">
+        過去7日間の学習状況
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="stats">
+
+    <div class="stat">
+
+      <div class="stat-label">
+        7日間の学習時間
+      </div>
+
+      <div
+        class="stat-value"
+        id="weeklyTime">
+        0分
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        7日間の達成率
+      </div>
+
+      <div
+        class="stat-value"
+        id="weeklyRate">
+        0%
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        連続学習
+      </div>
+
+      <div
+        class="stat-value"
+        id="studyStreak">
+        0日
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="summary-label">
+      科目別学習時間
+    </div>
+
+    <div id="subjectStats"></div>
+
+  </div>
 
 </section>
 
 
-<!-- =========================
-     Statistics
-========================= -->
+<section>
 
-<section id="stats">
+  <div class="section-head">
 
-  <h2 class="section-title">
-    学習統計
-  </h2>
+    <div>
 
-  <p class="section-subtitle">
-    最近7日間の学習状況です。
-  </p >
+      <h2 class="section-title">
+        StudyFlowについて
+      </h2>
 
+    </div>
 
-  <div class="stats-grid">
-
-    <div class="card">
-
-      <div class="card-title">
-        7日間の学習時間
-      </div>
-
-      <div
-        class="big-number"
-        id="weeklyTime">
-        0分
-      </div>
-
-    </div>
+  </div>
 
 
-    <div class="card">
+  <div class="card about">
 
-      <div class="card-title">
-        7日間の達成率
-      </div>
+    StudyFlowは、
+    毎日の学習計画・学習時間・達成状況を
+    シンプルに管理するためのWebサイトです。
 
-      <div
-        class="big-number"
-        id="weeklyRate">
-        0%
-      </div>
+    <br><br>
 
-    </div>
+    今日やることを決め、
+    タイマーで学習時間を記録し、
+    日々の積み重ねを確認できます。
 
+    <br><br>
 
-    <div class="card">
+    データはこのブラウザ内に保存されます。
 
-      <div class="card-title">
-        連続学習
-      </div>
-
-      <div
-        class="big-number"
-        id="studyStreak">
-        0日
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div
-    class="card"
-    style="margin-top:18px;"
-  >
-
-    <div class="card-title">
-      科目別学習時間
-    </div>
-
-    <div id="subjectStats">
-
-      <div class="empty-state">
-        タイマーを使うと、
-        科目別の学習時間が表示されます。
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     About
-========================= -->
-
-<section id="about">
-
-  <h2 class="section-title">
-    StudyFlowについて
-  </h2>
-
-  <div class="card">
-
-    <div class="about-text">
-
-      StudyFlowは、
-      高校生が毎日の学習計画と学習時間を
-      シンプルに管理するためのWebサイトです。
-
-      <br><br>
-
-      今日やることを決め、
-      タイマーで学習時間を記録し、
-      日々の積み重ねを確認できます。
-
-      <br><br>
-
-      登録したデータは、
-      このブラウザ内に保存されます。
-
-    </div>
-
-  </div>
+  </div>
 
 </section>
 
 </main>
 
-
-<!-- =========================
-     Footer
-========================= -->
-
-<footer>
-  © 2026 StudyFlow
-</footer>
+</div>
 
 
-<!-- JavaScript -->
+<script>
 
-<script src="script.js"></script>
+/* =========================
+   BASIC
+========================= */
 
-</body>
-</html>
+const $ = id =>
+  document.getElementById(id);
+
+
+function dateKey(date = new Date()){
+
+  return (
+    date.getFullYear()
+    + "-"
+    + String(
+        date.getMonth()+1
+      ).padStart(2,"0")
+    + "-"
+    + String(
+        date.getDate()
+      ).padStart(2,"0")
+  );
+
+}
+
+const today =
+  dateKey();
+
+
+$("todayDate").textContent =
+  new Date().toLocaleDateString(
+    "ja-JP",
+    {
+      year:"numeric",
+      month:"long",
+      day:"numeric",
+      weekday:"short"
+    }
+  );
+
+
+/* =========================
+   STORAGE
+========================= */
+
+function tasksKey(date=today){
+  return "sf_tasks_" + date;
+}
+
+function timeKey(date=today){
+  return "sf_time_" + date;
+}
+
+function subjectKey(date=today){
+  return "sf_subject_" + date;
+}
+
+
+function getTasks(date=today){
+  try{
+    return JSON.parse(      localStorage.getItem(        tasksKey(date)      )    ) || [];
+  }catch{
+    return [];
+  }
+}
+
+function saveTasks(tasks){
+  localStorage.setItem(    tasksKey(),    JSON.stringify(tasks)  );
+  refresh();
+}
+
+function getSubjectTimes(date=today){
+  try{
+    return JSON.parse(      localStorage.getItem(        subjectKey(date)      )    ) || {};
+  }catch{
+    return {};
+  }
+}
+
+/* =========================   TASK========================= */
+function addTask(){
+  const subject =    $("subjectInput").value;
+  const content =    $("contentInput")      .value      .trim();
+  const minutes =    Math.max(      0,      Number(        $("minutesInput").value      ) || 0    );
+  const priority =    $("priorityInput").value;
+
+  if(!content){
+    alert(      "学習内容を入力してください。"    );
+    return;
+  }
+
+  const tasks =    getTasks();
+
+  tasks.push({
+    id:Date.now(),
+    subject,
+    content,
+    minutes,
+    priority,
+    completed:false
+  });
+
+  $("contentInput").value="";  $("minutesInput").value="";
+
+  saveTasks(tasks);
+}
+
+function toggleTask(id){
+  const tasks =    getTasks();
+  const task =    tasks.find(      t=>t.id===id    );
+  if(!task)return;
+
+  task.completed =    !task.completed;
+
+  saveTasks(tasks);
+}
+
+function deleteTask(id){
+  const tasks =    getTasks();
+  const task =    tasks.find(      t=>t.id===id    );
+  if(!task)return;
+
+  if(    !confirm(      `「${task.content}」を削除しますか？`    )  )return;
+
+  saveTasks(    tasks.filter(      t=>t.id!==id    )  );
+}
+
+function safe(text){
+  const div =    document.createElement("div");
+  div.textContent =    String(text);
+  return div.innerHTML;
+}
+
+function subjectClass(subject){
+  const map={
+    "数学":"math",    "英語":"english",    "物理":"physics",    "化学":"chemistry",    "国語":"japanese",    "情報":"info"
+  };
+  return map[subject] || "other";
+}
+
+function renderTasks(){
+  const list =    $("taskList");
+  const tasks =    getTasks();
+
+  if(!tasks.length){
+    list.innerHTML=`      <div class="empty">        今日の学習予定はまだありません。<br>        上のフォームから追加してください。      </div>    `;
+    return;
+  }
+
+  const order={    "高":1,    "普通":2,    "低":3  };
+
+  tasks.sort(    (a,b)=>      Number(a.completed)      - Number(b.completed)      ||      (order[a.priority]||2)      - (order[b.priority]||2)  );
+
+  list.innerHTML =    tasks.map(task=>`
+      <div class="task        ${task.completed          ? "done"          : ""}">
+        <input          class="check"          type="checkbox"          ${task.completed            ? "checked"            : ""}          onchange="            toggleTask(${task.id})          "        >
+        <div          class="subject          ${subjectClass(            task.subject          )}">          ${safe(task.subject)}        </div>
+        <div class="task-content">          ${safe(task.content)}        </div>
+        <div class="task-meta">          ${            task.minutes              ? task.minutes+"分"              : "未設定"          }        </div>
+        <div class="task-meta">          ${safe(task.priority)}        </div>
+        <button          class="delete"          onclick="            deleteTask(${task.id})          ">          •••        </button>
+      </div>
+    `).join("");
+}
+
+/* =========================   TIMER========================= */
+let seconds =  Number(    localStorage.getItem(      timeKey()    )  ) || 0;
+let timer=null;
+
+function startTimer(){
+  if(timer)return;
+
+  $("timerStatus").textContent =    "学習中";
+
+  timer=setInterval(()=>{
+    seconds++;
+
+    localStorage.setItem(      timeKey(),      seconds    );
+
+    const subject =      $("timerSubject").value;
+
+    const data =      getSubjectTimes();
+
+    data[subject] =      Number(        data[subject] || 0      ) + 1;
+
+    localStorage.setItem(      subjectKey(),      JSON.stringify(data)    );
+
+    updateTimer();
+
+    if(seconds%10===0){
+      renderStats();      renderHistory();
+    }
+  },1000);
+}
+
+function pauseTimer(){
+  clearInterval(timer);
+  timer=null;
+
+  $("timerStatus").textContent =    "一時停止";
+
+  refresh();
+}
+
+function resetTimer(){
+  if(    !confirm(      "今日の学習時間をリセットしますか？"    )  )return;
+
+  clearInterval(timer);
+  timer=null;
+  seconds=0;
+
+  localStorage.setItem(    timeKey(),    0  );
+
+  localStorage.setItem(    subjectKey(),    "{}"  );
+
+  $("timerStatus").textContent =    "準備完了";
+
+  refresh();
+}
+
+function clock(sec){
+  const h =    Math.floor(sec/3600);
+  const m =    Math.floor(      (sec%3600)/60    );
+  const s =    sec%60;
+
+  return (    String(h).padStart(2,"0")    + ":"    + String(m).padStart(2,"0")    + ":"    + String(s).padStart(2,"0")  );
+}
+
+function humanTime(sec){
+  const h =    Math.floor(sec/3600);
+  const m =    Math.floor(      (sec%3600)/60    );
+
+  if(h){
+    return (      h+"時間"+m+"分"    );
+  }
+
+  return m+"分";
+}
+
+function minuteTime(min){
+  const h =    Math.floor(min/60);
+  const m =    min%60;
+
+  if(h){
+    return (      h+"時間"+m+"分"    );
+  }
+
+  return m+"分";
+}
+
+function updateTimer(){
+  $("timerDisplay")    .textContent =      clock(seconds);
+
+  $("todayTime")    .textContent =      humanTime(seconds);
+}
+
+/* =========================   SUMMARY========================= */
+function renderSummary(){
+  const tasks =    getTasks();
+  const total =    tasks.length;
+  const done =    tasks.filter(      t=>t.completed    ).length;
+
+  const rate =    total      ? Math.round(          done/total*100        )      : 0;
+
+  const planned =    tasks.reduce(      (sum,t)=>        sum+Number(          t.minutes||0        ),      0    );
+
+  $("todayRate")    .textContent =      rate+"%";
+
+  $("todayDone")    .textContent =      `${done} / ${total} 完了`;
+
+  $("todayProgress")    .style.width =      rate+"%";
+
+  $("plannedTime")    .textContent =      minuteTime(planned);
+
+  $("todayTime")    .textContent =      humanTime(seconds);
+
+  const streak =    calculateStreak();
+
+  $("streakTop")    .textContent =      streak+"日";
+}
+
+/* =========================   HISTORY========================= */
+function storedDates(){
+  const set =    new Set([today]);
+
+  for(    let i=0;    i<localStorage.length;    i++  ){
+    const key =      localStorage.key(i);
+
+    if(      key &&      key.startsWith(        "sf_tasks_"      )    ){
+      set.add(        key.replace(          "sf_tasks_",          ""        )      );
+    }
+
+    if(      key &&      key.startsWith(        "sf_time_"      )    ){
+      set.add(        key.replace(          "sf_time_",          ""        )      );
+    }
+  }
+
+  return [...set]    .sort()    .reverse();
+}
+
+function displayDate(key){
+  const d =    new Date(      key+"T00:00:00"    );
+
+  return d.toLocaleDateString(    "ja-JP",    {      month:"numeric",      day:"numeric",      weekday:"short"    }  );
+}
+
+function renderHistory(){
+  const records =    storedDates()      .map(date=>{
+        const tasks =          getTasks(date);
+        const total =          tasks.length;
+        const done =          tasks.filter(            t=>t.completed          ).length;
+        const rate =          total            ? Math.round(                done/total*100              )            : 0;
+        const sec =          Number(            localStorage.getItem(              timeKey(date)            )          ) || 0;
+
+        return{          date,          total,          done,          rate,          sec        };
+      })      .filter(        r=>          r.total>0 ||          r.sec>0      )      .slice(0,14);
+
+  if(!records.length){
+    $("historyList")      .innerHTML=`        <div class="empty">          まだ学習記録がありません。        </div>      `;
+    return;
+  }
+
+  $("historyList")    .innerHTML =      records.map(r=>`
+        <div class="history-row">
+          <div class="history-top">
+            <span>              ${displayDate(r.date)}            </span>
+            <span              class="history-rate">              ${r.rate}%            </span>
+          </div>
+          <div            class="history-detail">
+            ${r.done}/${r.total}            完了 ・            ${humanTime(r.sec)}
+          </div>
+          <div class="history-bar">
+            <div              style="                width:${r.rate}%              ">            </div>
+          </div>
+        </div>
+      `).join("");
+}
+
+/* =========================   STATS========================= */
+function lastDays(n){
+  const result=[];
+
+  for(let i=0;i<n;i++){
+    const d =      new Date();
+    d.setDate(      d.getDate()-i    );
+    result.push(      dateKey(d)    );
+  }
+
+  return result;
+}
+
+function calculateStreak(){
+  let count=0;
+
+  for(let i=0;i<365;i++){
+    const d =      new Date();
+    d.setDate(      d.getDate()-i    );
+    const key =      dateKey(d);
+
+    const sec =      Number(        localStorage.getItem(          timeKey(key)        )      ) || 0;
+
+    const tasks =      getTasks(key);
+
+    const studied =      sec>0 ||      tasks.some(        t=>t.completed      );
+
+    if(studied){
+      count++;
+    }else{
+      break;
+    }
+  }
+
+  return count;
+}
+
+function renderStats(){
+  const dates =    lastDays(7);
+
+  let totalSeconds=0;  let totalTasks=0;  let doneTasks=0;
+  const subjects={};
+
+  dates.forEach(date=>{
+    totalSeconds +=      Number(        localStorage.getItem(          timeKey(date)        )      ) || 0;
+
+    const tasks =      getTasks(date);
+
+    totalTasks +=      tasks.length;
+
+    doneTasks +=      tasks.filter(        t=>t.completed      ).length;
+
+    const data =      getSubjectTimes(date);
+
+    Object.entries(data)      .forEach(        ([subject,sec])=>{
+          subjects[subject] =            Number(              subjects[subject]||0            )            +            Number(sec||0);
+        }      );
+  });
+
+  const rate =    totalTasks      ? Math.round(          doneTasks/          totalTasks*100        )      : 0;
+
+  const streak =    calculateStreak();
+
+  $("weeklyTime")    .textContent =      humanTime(        totalSeconds      );
+
+  $("weeklyRate")    .textContent =      rate+"%";
+
+  $("studyStreak")    .textContent =      streak+"日";
+
+  $("streakTop")    .textContent =      streak+"日";
+
+  const entries =    Object.entries(subjects)      .filter(        ([,sec])=>sec>0      )      .sort(        (a,b)=>b[1]-a[1]      );
+
+  if(!entries.length){
+    $("subjectStats")      .innerHTML=`        <div class="empty">          タイマーを使うと          科目別の学習時間が          表示されます。        </div>      `;
+    return;
+  }
+
+  $("subjectStats")    .innerHTML =      entries.map(        ([subject,sec])=>`
+          <div            class="subject-stat">
+            <span>              ${safe(subject)}            </span>
+            <strong>              ${humanTime(sec)}            </strong>
+          </div>
+        `      ).join("");
+}
+
+/* =========================   REFRESH========================= */
+function refresh(){
+  renderTasks();
+  renderSummary();
+  updateTimer();
+  renderHistory();
+  renderStats();
+}
+
+/* ENTER */
+$("contentInput")  .addEventListener(    "keydown",    e=>{
+      if(e.key==="Enter"){
+        addTask();
+      }
+    }  );
+
+/* START */
+refresh();
+</script>
+</body></html>
