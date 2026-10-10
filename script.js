@@ -9,8 +9,11 @@ const NICKNAME_KEY = "studyflow_nickname";
 const GRADE_KEY = "studyflow_grade";
 const AVATAR_EMOJI_KEY = "studyflow_avatar_emoji";
 const AVATAR_COLOR_KEY = "studyflow_avatar_color";
+const PROFILE_SETUP_KEY = "studyflow_profile_setup_done";
 const EXAM_NAME_KEY = "studyflow_exam_name";
 const EXAM_DATE_KEY = "studyflow_exam_date";
+const AVATAR_OPTIONS = ["🐱", "🐶", "🐰", "🐻", "🐼", "🐨", "🦊", "🐯", "🐷", "🐸", "🐧", "🐹"];
+const GRADE_OPTIONS = ["中一", "中二", "中三", "高一", "高二", "高三", "大学", "その他"];
 const SUBJECT_COLORS = {
   数学: "#db2f76",
   英語: "#ffa409",
@@ -33,6 +36,9 @@ const I18N = {
     avatarEmojiLabel: "好きな動物",
     avatarEmojiPlaceholder: "例：🐱",
     avatarColorLabel: "色",
+    setupTitle: "プロフィールを設定",
+    setupSubtitle: "ニックネーム、アイコン、学年を登録しましょう。",
+    setupSave: "はじめる",
     viewPlan: "計画を見る",
     streakWord: "連続学習!",
     menubar: "メニュー",
@@ -164,6 +170,16 @@ const I18N = {
       高: "高",
       普通: "普通",
       低: "低"
+    },
+    grades: {
+      中一: "中一",
+      中二: "中二",
+      中三: "中三",
+      高一: "高一",
+      高二: "高二",
+      高三: "高三",
+      大学: "大学",
+      その他: "その他"
     }
   },
   en: {
@@ -177,6 +193,9 @@ const I18N = {
     avatarEmojiLabel: "Favorite animal",
     avatarEmojiPlaceholder: "E.g. 🐱",
     avatarColorLabel: "Color",
+    setupTitle: "Set Up Your Profile",
+    setupSubtitle: "Choose your nickname, icon, and current grade.",
+    setupSave: "Start",
     viewPlan: "View Plan",
     streakWord: "streak!",
     menubar: "Menubar",
@@ -308,6 +327,16 @@ const I18N = {
       高: "High",
       普通: "Normal",
       低: "Low"
+    },
+    grades: {
+      中一: "Middle 1",
+      中二: "Middle 2",
+      中三: "Middle 3",
+      高一: "High 1",
+      高二: "High 2",
+      高三: "High 3",
+      大学: "College",
+      その他: "Other"
     }
   },
   zh: {
@@ -321,6 +350,9 @@ const I18N = {
     avatarEmojiLabel: "喜欢的动物",
     avatarEmojiPlaceholder: "例如：🐱",
     avatarColorLabel: "颜色",
+    setupTitle: "设置个人资料",
+    setupSubtitle: "登录昵称、头像 emoji 和当前年级。",
+    setupSave: "开始使用",
     viewPlan: "查看计划",
     streakWord: "连续学习!",
     menubar: "菜单",
@@ -452,6 +484,16 @@ const I18N = {
       高: "高",
       普通: "普通",
       低: "低"
+    },
+    grades: {
+      中一: "初一",
+      中二: "初二",
+      中三: "初三",
+      高一: "高一",
+      高二: "高二",
+      高三: "高三",
+      大学: "大学",
+      その他: "其他"
     }
   },
   ko: {
@@ -465,6 +507,9 @@ const I18N = {
     avatarEmojiLabel: "좋아하는 동물",
     avatarEmojiPlaceholder: "예: 🐱",
     avatarColorLabel: "색상",
+    setupTitle: "프로필 설정",
+    setupSubtitle: "닉네임, 아이콘, 현재 학년을 등록하세요.",
+    setupSave: "시작하기",
     viewPlan: "계획 보기",
     streakWord: "연속 학습!",
     menubar: "메뉴",
@@ -596,6 +641,16 @@ const I18N = {
       高: "높음",
       普通: "보통",
       低: "낮음"
+    },
+    grades: {
+      中一: "중1",
+      中二: "중2",
+      中三: "중3",
+      高一: "고1",
+      高二: "고2",
+      高三: "고3",
+      大学: "대학",
+      その他: "기타"
     }
   }
 };
@@ -756,6 +811,14 @@ function updateProfileName() {
   if ($("gradeInput")) {
     $("gradeInput").value = currentGrade;
   }
+
+  if ($("setupNicknameInput")) {
+    $("setupNicknameInput").value = currentNickname;
+  }
+
+  if ($("setupGradeInput")) {
+    $("setupGradeInput").value = currentGrade;
+  }
 }
 
 function updateAvatar() {
@@ -769,6 +832,10 @@ function updateAvatar() {
 
   if ($("avatarEmojiInput")) {
     $("avatarEmojiInput").value = currentAvatarEmoji;
+  }
+
+  if ($("setupAvatarEmojiInput")) {
+    $("setupAvatarEmojiInput").value = currentAvatarEmoji;
   }
 
   if ($("avatarColorInput")) {
@@ -785,6 +852,45 @@ function renderSelectOptions(selectId, values, labels) {
     `<option value="${escapeHTML(value)}">${escapeHTML(labels[value] || value)}</option>`
   )).join("");
   select.value = values.includes(selected) ? selected : values[0];
+}
+
+function emojiLabels() {
+  return AVATAR_OPTIONS.reduce((labels, emoji) => {
+    labels[emoji] = emoji;
+    return labels;
+  }, {});
+}
+
+function showProfileSetupIfNeeded() {
+  const panel = $("profileSetup");
+  if (!panel || localStorage.getItem(PROFILE_SETUP_KEY)) return;
+
+  panel.classList.add("open");
+  panel.setAttribute("aria-hidden", "false");
+  $("setupNicknameInput")?.focus();
+}
+
+function closeProfileSetup() {
+  const panel = $("profileSetup");
+  if (!panel) return;
+
+  panel.classList.remove("open");
+  panel.setAttribute("aria-hidden", "true");
+}
+
+function saveProfileSetup() {
+  currentNickname = $("setupNicknameInput")?.value.trim() || currentNickname || "Yunru";
+  currentAvatarEmoji = $("setupAvatarEmojiInput")?.value || currentAvatarEmoji || "🐱";
+  currentGrade = $("setupGradeInput")?.value || currentGrade || "高三";
+
+  localStorage.setItem(NICKNAME_KEY, currentNickname);
+  localStorage.setItem(AVATAR_EMOJI_KEY, currentAvatarEmoji);
+  localStorage.setItem(GRADE_KEY, currentGrade);
+  localStorage.setItem(PROFILE_SETUP_KEY, "true");
+
+  updateProfileName();
+  updateAvatar();
+  closeProfileSetup();
 }
 
 function setTimerState(state) {
@@ -813,6 +919,10 @@ function applyTranslations() {
 
   renderSelectOptions("subject", SUBJECTS, I18N[currentLanguage].subjects);
   renderSelectOptions("studyLogSubject", SUBJECTS, I18N[currentLanguage].subjects);
+  renderSelectOptions("avatarEmojiInput", AVATAR_OPTIONS, emojiLabels());
+  renderSelectOptions("setupAvatarEmojiInput", AVATAR_OPTIONS, emojiLabels());
+  renderSelectOptions("gradeInput", GRADE_OPTIONS, I18N[currentLanguage].grades);
+  renderSelectOptions("setupGradeInput", GRADE_OPTIONS, I18N[currentLanguage].grades);
   renderSelectOptions("importance", IMPORTANCE_LEVELS, {
     important: t("important"),
     notImportant: t("notImportant")
@@ -1471,13 +1581,13 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProfileName();
   });
 
-  $("gradeInput")?.addEventListener("input", event => {
+  $("gradeInput")?.addEventListener("change", event => {
     currentGrade = event.target.value.trim();
     localStorage.setItem(GRADE_KEY, currentGrade);
     updateProfileName();
   });
 
-  $("avatarEmojiInput")?.addEventListener("input", event => {
+  $("avatarEmojiInput")?.addEventListener("change", event => {
     currentAvatarEmoji = event.target.value.trim();
     localStorage.setItem(AVATAR_EMOJI_KEY, currentAvatarEmoji);
     updateAvatar();
@@ -1504,4 +1614,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const name = event.target.value.trim();
     if ($("examCardTitle")) $("examCardTitle").textContent = name || t("examCountdownCard");
   });
+
+  showProfileSetupIfNeeded();
 });

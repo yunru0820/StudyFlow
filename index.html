@@ -7,6 +7,26 @@
   <link rel="stylesheet" href="Style.css">
 </head>
 <body>
+  <div class="profile-setup" id="profileSetup" aria-hidden="true">
+    <form class="profile-setup-card" onsubmit="event.preventDefault(); saveProfileSetup();">
+      <h2 data-i18n="setupTitle">プロフィールを設定</h2>
+      <p data-i18n="setupSubtitle">ニックネーム、アイコン、学年を登録しましょう。</p>
+      <label>
+        <span data-i18n="nicknameLabel">ニックネーム</span>
+        <input id="setupNicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="例：Yunru">
+      </label>
+      <label>
+        <span data-i18n="avatarEmojiLabel">好きな動物</span>
+        <select id="setupAvatarEmojiInput"></select>
+      </label>
+      <label>
+        <span data-i18n="gradeLabel">学年</span>
+        <select id="setupGradeInput"></select>
+      </label>
+      <button class="primary-btn" type="submit" data-i18n="setupSave">はじめる</button>
+    </form>
+  </div>
+
   <div class="browser-frame" aria-hidden="true">
     <span class="dot red"></span>
     <span class="dot amber"></span>
@@ -37,7 +57,7 @@
         <div class="avatar-settings">
           <label>
             <span data-i18n="avatarEmojiLabel">好きな動物</span>
-            <input id="avatarEmojiInput" maxlength="4" data-i18n-placeholder="avatarEmojiPlaceholder" placeholder="🐱">
+            <select id="avatarEmojiInput" data-i18n-aria="avatarEmojiLabel" aria-label="好きな動物"></select>
           </label>
           <label>
             <span data-i18n="avatarColorLabel">色</span>
@@ -50,7 +70,7 @@
         </label>
         <label class="nickname-field">
           <span data-i18n="gradeLabel">学年</span>
-          <input id="gradeInput" data-i18n-placeholder="gradePlaceholder" placeholder="高三">
+          <select id="gradeInput" data-i18n-aria="gradeLabel" aria-label="学年"></select>
         </label>
         <a class="profile-button" href="#plan"><span data-i18n="viewPlan">View Plan</span> <span>↗</span></a>
         <section class="streak-calendar" aria-live="polite">

@@ -45,6 +45,63 @@ button {
   cursor: pointer;
 }
 
+.profile-setup {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: rgba(242, 240, 239, .82);
+  backdrop-filter: blur(10px);
+}
+
+.profile-setup.open {
+  display: grid;
+}
+
+.profile-setup-card {
+  width: min(420px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 28px 70px rgba(48, 37, 54, .16);
+  padding: 28px;
+  display: grid;
+  gap: 16px;
+}
+
+.profile-setup-card h2 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+.profile-setup-card p {
+  margin: -6px 0 4px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.profile-setup-card label {
+  display: grid;
+  gap: 8px;
+  color: #8f8a94;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.profile-setup-card input,
+.profile-setup-card select {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  color: var(--text);
+  padding: 0 14px;
+}
+
 .browser-frame {
   width: min(1720px, calc(100% - 96px));
   height: 58px;
@@ -156,7 +213,8 @@ button {
   font-weight: 800;
 }
 
-.avatar-settings input {
+.avatar-settings input,
+.avatar-settings select {
   height: 40px;
   border-radius: 10px;
 }
@@ -221,7 +279,8 @@ button {
   font-weight: 800;
 }
 
-.nickname-field input {
+.nickname-field input,
+.nickname-field select {
   height: 40px;
   border-radius: 10px;
 }
