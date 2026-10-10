@@ -1,780 +1,217 @@
-<!DOCTYPE html>
-<html lang="ja">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>StudyFlow</title>
-
-<style>
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:#e9edf4;
-  color:#25263a;
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic",sans-serif;
-}
-button,input,select{font:inherit}
-
-.shell{
-  width:calc(100% - 40px);
-  max-width:1350px;
-  min-height:calc(100vh - 40px);
-  margin:20px auto;
-  background:#fff;
-  border-radius:28px;
-  display:grid;
-  grid-template-columns:190px minmax(0,1fr);
-  overflow:hidden;
-  box-shadow:0 20px 60px rgba(50,60,90,.10);
-}
-
-/* 左侧导航 */
-.sidebar{
-  background:#fafbfe;
-  border-right:1px solid #eef0f5;
-  padding:35px 20px;
-}
-.logo{
-  font-size:22px;
-  font-weight:800;
-  margin:0 10px 38px;
-}
-.logo b{color:#ff6c4c}
-
-.nav{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.nav a{
-  color:#85899a;
-  text-decoration:none;
-  padding:12px 14px;
-  border-radius:12px;
-  font-size:13px;
-}
-.nav a:hover,.nav a:first-child{
-  background:#fff;
-  color:#292b3f;
-  box-shadow:0 6px 18px rgba(50,60,90,.06);
-}
-.nav a:first-child{border-left:3px solid #ff6c4c}
-
-/* 主区域 */
-.main{padding:42px 45px 70px}
-section{margin-bottom:48px}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:30px;
-}
-.hello{font-size:16px}
-.date{font-size:12px;color:#9b9eac}
-
-.hero{
-  position:relative;
-  padding:18px 0 35px;
-  border-bottom:1px solid #eff0f4;
-}
-.hero h1{
-  margin:0 0 10px;
-  font-size:34px;
-  font-weight:600;
-  letter-spacing:-1px;
-}
-.hero p{margin:0;color:#9a9dac;font-size:13px}
-
-.bubble{
-  position:absolute;
-  right:25px;
-  top:0;
-  width:75px;
-  height:75px;
-  border-radius:50%;
-  background:#ff6c4c;
-  box-shadow:-35px 50px 0 -23px #f4c852,25px 52px 0 -25px #64cda6;
-}
-
-/* 今日数据 */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:13px;
-  margin-top:25px;
-}
-.card{
-  border:1px solid #edf0f4;
-  border-radius:18px;
-  background:#fff;
-  padding:20px;
-  box-shadow:0 7px 24px rgba(50,60,90,.04);
-}
-.cards .card:nth-child(1){background:#f4f1ff}
-.cards .card:nth-child(2){background:#fff7dd}
-.cards .card:nth-child(3){background:#eaf9f4}
-.cards .card:nth-child(4){background:#fff0eb}
-
-.label{font-size:12px;color:#85899a}
-.big{font-size:27px;font-weight:800;margin-top:10px}
-.small{font-size:11px;color:#9da1ae;margin-top:5px}
-
-.bar{
-  height:6px;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:12px;
-}
-#progress{
-  height:100%;
-  width:0;
-  background:#7775bd;
-  border-radius:10px;
-}
-
-/* 标题 */
-.heading{margin-bottom:15px}
-.heading h2{margin:0;font-size:19px}
-.heading p{margin:5px 0 0;color:#9b9eaa;font-size:11px}
-
-/* 学习计划 */
-.form{
-  display:grid;
-  grid-template-columns:110px 1fr 90px 120px 70px;
-  gap:8px;
-  padding-bottom:18px;
-  border-bottom:1px solid #eff0f4;
-}
-input,select{
-  min-width:0;
-  height:40px;
-  border:1px solid #e4e7ee;
-  border-radius:9px;
-  background:#fff;
-  padding:0 10px;
-  color:#303247;
-  outline:none;
-}
-input:focus,select:focus{border-color:#ff9d87}
-
-button{
-  border:0;
-  border-radius:9px;
-  cursor:pointer;
-  padding:10px 13px;
-}
-.add,.start{
-  background:#ff6c4c;
-  color:white;
-  font-weight:700;
-}
-.gray{background:#f2f3f6;color:#777b8d}
-
-.task{
-  display:grid;
-  grid-template-columns:25px 75px 1fr 65px 65px 28px;
-  gap:10px;
-  align-items:center;
-  min-height:57px;
-  border-bottom:1px solid #eff0f4;
-  font-size:12px;
-}
-.task.done{opacity:.45}
-.task.done .taskname{text-decoration:line-through}
-
-.subject{
-  display:inline-block;
-  text-align:center;
-  padding:5px 7px;
-  border-radius:7px;
-  background:#eeedff;
-  color:#6f6db3;
-}
-.task:nth-child(2n) .subject{background:#e7f8f1;color:#3aa47e}
-.task:nth-child(3n) .subject{background:#fff1ed;color:#e86e53}
-.task:nth-child(4n) .subject{background:#e9f7fb;color:#45a6c0}
-
-.delete{
-  background:none;
-  color:#a7aab5;
-  padding:4px;
-}
-.empty{
-  text-align:center;
-  padding:35px 10px;
-  color:#afb2bd;
-  font-size:12px;
-}
-
-/* 计时器和记录 */
-.columns{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-.timer{text-align:center}
-.timer select{max-width:220px}
-
-.clock{
-  width:190px;
-  height:190px;
-  margin:20px auto;
-  border-radius:50%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:
-    radial-gradient(circle,#fff 63%,transparent 64%),
-    conic-gradient(#ff6c4c 0 25%,#f3c64f 25% 48%,#61cba3 48% 72%,#7775bd 72%);
-}
-#clock{font-size:28px;font-weight:800}
-#timerState{font-size:11px;color:#999dab;margin-top:5px}
-.timerBtns{display:flex;justify-content:center;gap:8px}
-
-.record{
-  padding:13px 2px;
-  border-bottom:1px solid #eff0f4;
-}
-.recordTop{
-  display:flex;
-  justify-content:space-between;
-  font-size:12px;
-  font-weight:700;
-}
-.rate{color:#ff6c4c}
-.recordInfo{font-size:11px;color:#9da0ad;margin-top:5px}
-
-/* 统计 */
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:13px;
-  margin-bottom:13px;
-}
-.stat{
-  padding:20px;
-  border:1px solid #edf0f4;
-  border-radius:16px;
-}
-.stat:nth-child(1){border-top:3px solid #7775bd}
-.stat:nth-child(2){border-top:3px solid #61cba3}
-.stat:nth-child(3){border-top:3px solid #ff6c4c}
-.stat strong{display:block;font-size:24px;margin-top:8px}
-
-.subjectRow{
-  display:flex;
-  justify-content:space-between;
-  padding:11px 2px;
-  border-bottom:1px solid #eff0f4;
-  font-size:12px;
-}
-
-/* 手机 */
-@media(max-width:800px){
-  body{background:#fff}
-  .shell{
-    width:100%;
-    margin:0;
-    min-height:100vh;
-    border-radius:0;
-    display:block;
-    box-shadow:none;
-  }
-  .sidebar{
-    position:sticky;
-    top:0;
-    z-index:10;
-    padding:13px 15px 10px;
-    border-right:0;
-    border-bottom:1px solid #eee;
-  }
-  .logo{margin:0 0 10px;font-size:20px}
-  .nav{
-    flex-direction:row;
-    overflow-x:auto;
-  }
-  .nav a{
-    white-space:nowrap;
-    background:#f7f8fa;
-    padding:8px 10px;
-    font-size:11px;
-  }
-  .main{padding:25px 15px 60px}
-  .hero h1{font-size:27px}
-  .bubble{
-    width:52px;height:52px;right:8px;top:8px;
-  }
-  .cards{grid-template-columns:1fr 1fr;gap:9px}
-  .card{padding:15px}
-  .big{font-size:23px}
-  .form{grid-template-columns:1fr 1fr}
-  .form #content{grid-column:1/-1}
-  .form .add{grid-column:1/-1}
-  .columns{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr}
-  .task{
-    grid-template-columns:24px 70px 1fr 25px;
-    padding:10px 0;
-  }
-  .task .mins,.task .priority{display:none}
-}
-
-@media(max-width:420px){
-  .hero{padding-right:55px}
-  .cards{grid-template-columns:1fr 1fr}
-  .form{grid-template-columns:1fr}
-  .form #content,.form .add{grid-column:auto}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StudyFlow</title>
+  <link rel="stylesheet" href="Style.css">
 </head>
-
 <body>
-
-<div class="shell">
-
-<aside class="sidebar">
-  <div class="logo"><b>✦</b> StudyFlow</div>
-
-  <nav class="nav">
-    <a href="#home">⌂　ホーム</a>
-    <a href="#plan">▦　学習計画</a>
-    <a href="#timer">◷　タイマー</a>
-    <a href="#history">▤　学習記録</a>
-    <a href="#stats">◔　統計</a>
-  </nav>
-</aside>
-
-<main class="main">
-
-<section id="home">
-
-  <div class="top">
-    <div class="hello">Hello, <strong>Student!</strong></div>
-    <div class="date" id="date"></div>
-  </div>
-
-  <div class="hero">
-    <h1>今日も、自分のペースで。</h1>
-    <p>小さな積み重ねが、大きな未来につながる。</p>
-    <div class="bubble"></div>
-  </div>
-
-  <div class="cards">
-
-    <div class="card">
-      <div class="label">今日の達成率</div>
-      <div class="big" id="rate">0%</div>
-      <div class="small" id="done">0 / 0 完了</div>
-      <div class="bar"><div id="progress"></div></div>
-    </div>
-
-    <div class="card">
-      <div class="label">今日の予定時間</div>
-      <div class="big" id="planned">0分</div>
-      <div class="small">登録した学習予定</div>
-    </div>
-
-    <div class="card">
-      <div class="label">今日の学習時間</div>
-      <div class="big" id="studied">0分</div>
-      <div class="small">タイマーで記録</div>
-    </div>
-
-    <div class="card">
-      <div class="label">連続学習日数</div>
-      <div class="big" id="streakTop">0日</div>
-      <div class="small">Keep going!</div>
-    </div>
-
-  </div>
-</section>
-
-
-<section id="plan">
-
-  <div class="heading">
-    <h2>学習計画</h2>
-    <p>今日取り組む内容を登録しましょう。</p>
-  </div>
-
-  <div class="card">
-
-    <div class="form">
-
-      <select id="subject">
-        <option>数学</option>
-        <option>英語</option>
-        <option>物理</option>
-        <option>化学</option>
-        <option>国語</option>
-        <option>情報</option>
-        <option>その他</option>
-      </select>
-
-      <input id="content" placeholder="例：プラチカ 10問">
-
-      <input id="minutes" type="number" min="0" placeholder="予定(分)">
-
-      <select id="priority">
-        <option>高</option>
-        <option selected>普通</option>
-        <option>低</option>
-      </select>
-
-      <button class="add" onclick="addTask()">追加</button>
-
-    </div>
-
-    <div id="tasks"></div>
-
-  </div>
-</section>
-
-
-<div class="columns">
-
-<section id="timer">
-
-  <div class="heading">
-    <h2>学習タイマー</h2>
-    <p>実際の学習時間を記録します。</p>
-  </div>
-
-  <div class="card timer">
-
-    <select id="timerSubject">
-      <option>数学</option>
-      <option>英語</option>
-      <option>物理</option>
-      <option>化学</option>
-      <option>国語</option>
-      <option>情報</option>
-      <option>その他</option>
-    </select>
-
-    <div class="clock">
-      <div id="clock">00:00:00</div>
-      <div id="timerState">準備完了</div>
-    </div>
-
-    <div class="timerBtns">
-      <button class="start" onclick="startTimer()">▶ 開始</button>
-      <button class="gray" onclick="pauseTimer()">一時停止</button>
-      <button class="gray" onclick="resetTimer()">リセット</button>
-    </div>
-
-  </div>
-</section>
-
-
-<section id="history">
-
-  <div class="heading">
-    <h2>学習記録</h2>
-    <p>最近の学習状況</p>
-  </div>
-
-  <div class="card" id="historyBox"></div>
-
-</section>
-
-</div>
-
-
-<section id="stats">
-
-  <div class="heading">
-    <h2>学習統計</h2>
-    <p>過去7日間の学習状況</p>
-  </div>
-
-  <div class="stats">
-
-    <div class="stat">
-      <div class="label">7日間の学習時間</div>
-      <strong id="weekTime">0分</strong>
-    </div>
-
-    <div class="stat">
-      <div class="label">7日間の達成率</div>
-      <strong id="weekRate">0%</strong>
-    </div>
-
-    <div class="stat">
-      <div class="label">連続学習</div>
-      <strong id="streak">0日</strong>
-    </div>
-
-  </div>
-
-  <div class="card">
-    <div class="label">科目別学習時間</div>
-    <div id="subjectStats"></div>
-  </div>
-
-</section>
-
-</main>
-</div>
-
-
-<script>
-const $=id=>document.getElementById(id);
-
-function dk(d=new Date()){
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-
-const today=dk();
-const taskKey=d=>"studyflow_tasks_"+d;
-const timeKey=d=>"studyflow_time_"+d;
-const subKey=d=>"studyflow_subject_"+d;
-
-$("date").textContent=new Date().toLocaleDateString("ja-JP",{
-  year:"numeric",month:"long",day:"numeric",weekday:"short"
-});
-
-function getTasks(d=today){
-  try{return JSON.parse(localStorage.getItem(taskKey(d)))||[]}
-  catch{return []}
-}
-
-function getSubs(d=today){
-  try{return JSON.parse(localStorage.getItem(subKey(d)))||{}}
-  catch{return {}}
-}
-
-function saveTasks(x){
-  localStorage.setItem(taskKey(today),JSON.stringify(x));
-  refresh();
-}
-
-function esc(x){
-  const d=document.createElement("div");
-  d.textContent=x;
-  return d.innerHTML;
-}
-
-function addTask(){
-  const name=$("content").value.trim();
-  if(!name){alert("学習内容を入力してください。");return}
-
-  const t=getTasks();
-  t.push({
-    id:Date.now(),
-    subject:$("subject").value,
-    name:name,
-    minutes:Number($("minutes").value)||0,
-    priority:$("priority").value,
-    done:false
-  });
-
-  $("content").value="";
-  $("minutes").value="";
-  saveTasks(t);
-}
-
-function toggleTask(id){
-  const t=getTasks();
-  const x=t.find(a=>a.id===id);
-  if(x)x.done=!x.done;
-  saveTasks(t);
-}
-
-function removeTask(id){
-  if(!confirm("この予定を削除しますか？"))return;
-  saveTasks(getTasks().filter(x=>x.id!==id));
-}
-
-function renderTasks(){
-  let t=getTasks();
-  const order={高:1,普通:2,低:3};
-  t.sort((a,b)=>Number(a.done)-Number(b.done)||(order[a.priority]-order[b.priority]));
-
-  if(!t.length){
-    $("tasks").innerHTML='<div class="empty">今日の学習予定はまだありません。</div>';
-    return;
-  }
-
-  $("tasks").innerHTML=t.map(x=>`
-    <div class="task ${x.done?"done":""}">
-      <input type="checkbox" ${x.done?"checked":""} onchange="toggleTask(${x.id})">
-      <span class="subject">${esc(x.subject)}</span>
-      <span class="taskname">${esc(x.name)}</span>
-      <span class="mins">${x.minutes}分</span>
-      <span class="priority">${esc(x.priority)}</span>
-      <button class="delete" onclick="removeTask(${x.id})">×</button>
-    </div>
-  `).join("");
-}
-
-let seconds=Number(localStorage.getItem(timeKey(today)))||0;
-let timer=null;
-
-function formatClock(s){
-  const h=Math.floor(s/3600);
-  const m=Math.floor((s%3600)/60);
-  const z=s%60;
-  return [h,m,z].map(x=>String(x).padStart(2,"0")).join(":");
-}
-
-function human(s){
-  const h=Math.floor(s/3600);
-  const m=Math.floor((s%3600)/60);
-  return h?h+"時間"+m+"分":m+"分";
-}
-
-function startTimer(){
-  if(timer)return;
-  $("timerState").textContent="学習中";
-
-  timer=setInterval(()=>{
-    seconds++;
-    localStorage.setItem(timeKey(today),seconds);
-
-    const subject=$("timerSubject").value;
-    const data=getSubs();
-    data[subject]=(data[subject]||0)+1;
-    localStorage.setItem(subKey(today),JSON.stringify(data));
-
-    updateClock();
-  },1000);
-}
-
-function pauseTimer(){
-  clearInterval(timer);
-  timer=null;
-  $("timerState").textContent="一時停止";
-  refresh();
-}
-
-function resetTimer(){
-  if(!confirm("今日の学習時間をリセットしますか？"))return;
-  clearInterval(timer);
-  timer=null;
-  seconds=0;
-  localStorage.setItem(timeKey(today),0);
-  localStorage.setItem(subKey(today),"{}");
-  $("timerState").textContent="準備完了";
-  refresh();
-}
-
-function updateClock(){
-  $("clock").textContent=formatClock(seconds);
-  $("studied").textContent=human(seconds);
-}
-
-function streak(){
-  let n=0;
-
-  for(let i=0;i<365;i++){
-    const d=new Date();
-    d.setDate(d.getDate()-i);
-    const k=dk(d);
-    const sec=Number(localStorage.getItem(timeKey(k)))||0;
-    const done=getTasks(k).some(x=>x.done);
-
-    if(sec>0||done)n++;
-    else break;
-  }
-  return n;
-}
-
-function summary(){
-  const t=getTasks();
-  const completed=t.filter(x=>x.done).length;
-  const rate=t.length?Math.round(completed/t.length*100):0;
-  const planned=t.reduce((a,x)=>a+(Number(x.minutes)||0),0);
-
-  $("rate").textContent=rate+"%";
-  $("done").textContent=completed+" / "+t.length+" 完了";
-  $("progress").style.width=rate+"%";
-  $("planned").textContent=planned+"分";
-  $("studied").textContent=human(seconds);
-  $("streakTop").textContent=streak()+"日";
-}
-
-function last7(){
-  const a=[];
-  for(let i=0;i<7;i++){
-    const d=new Date();
-    d.setDate(d.getDate()-i);
-    a.push(dk(d));
-  }
-  return a;
-}
-
-function history(){
-  const rows=last7().map(k=>{
-    const t=getTasks(k);
-    const done=t.filter(x=>x.done).length;
-    const sec=Number(localStorage.getItem(timeKey(k)))||0;
-    const rate=t.length?Math.round(done/t.length*100):0;
-    return {k,t:t.length,done,sec,rate};
-  }).filter(x=>x.t||x.sec);
-
-  if(!rows.length){
-    $("historyBox").innerHTML='<div class="empty">まだ学習記録がありません。</div>';
-    return;
-  }
-
-  $("historyBox").innerHTML=rows.map(x=>`
-    <div class="record">
-      <div class="recordTop">
-        <span>${x.k.slice(5).replace("-","/")}</span>
-        <span class="rate">${x.rate}%</span>
-      </div>
-      <div class="recordInfo">${x.done}/${x.t} 完了 ・ ${human(x.sec)}</div>
-    </div>
-  `).join("");
-}
-
-function stats(){
-  let sec=0,total=0,done=0;
-  const subs={};
-
-  last7().forEach(k=>{
-    sec+=Number(localStorage.getItem(timeKey(k)))||0;
-
-    const t=getTasks(k);
-    total+=t.length;
-    done+=t.filter(x=>x.done).length;
-
-    const s=getSubs(k);
-    Object.keys(s).forEach(name=>{
-      subs[name]=(subs[name]||0)+Number(s[name]||0);
-    });
-  });
-
-  $("weekTime").textContent=human(sec);
-  $("weekRate").textContent=(total?Math.round(done/total*100):0)+"%";
-  $("streak").textContent=streak()+"日";
-
-  const arr=Object.entries(subs).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
-
-  $("subjectStats").innerHTML=arr.length
-    ?arr.map(x=>`<div class="subjectRow"><span>${esc(x[0])}</span><strong>${human(x[1])}</strong></div>`).join("")
-    :'<div class="empty">タイマーを使うと科目別の記録が表示されます。</div>';
-}
-
-function refresh(){
-  renderTasks();
-  summary();
-  updateClock();
-  history();
-  stats();
-}
-
-$("content").addEventListener("keydown",e=>{
-  if(e.key==="Enter")addTask();
-});
-
-refresh();
-</script>
-
+  <div class="browser-frame" aria-hidden="true">
+    <span class="dot red"></span>
+    <span class="dot amber"></span>
+    <span class="dot green"></span>
+    <div class="address">studyflow.local</div>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">S</span>
+        <span>StudyFlow</span>
+      </div>
+
+      <label class="language-switch">
+        <span data-i18n="languageLabel">Language</span>
+        <select id="languageSelect" aria-label="Language">
+          <option value="ja">日本語</option>
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ko">한국어</option>
+        </select>
+      </label>
+
+      <section class="profile-card">
+        <div class="avatar" id="avatarPreview">🐱</div>
+        <h2 id="profileName">Yunru さん</h2>
+        <div class="avatar-settings">
+          <label>
+            <span data-i18n="avatarEmojiLabel">好きな動物</span>
+            <input id="avatarEmojiInput" maxlength="4" data-i18n-placeholder="avatarEmojiPlaceholder" placeholder="🐱">
+          </label>
+          <label>
+            <span data-i18n="avatarColorLabel">色</span>
+            <input id="avatarColorInput" type="color" value="#f6e6ce">
+          </label>
+        </div>
+        <label class="nickname-field">
+          <span data-i18n="nicknameLabel">ニックネーム</span>
+          <input id="nicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="Yunru">
+        </label>
+        <label class="nickname-field">
+          <span data-i18n="gradeLabel">学年</span>
+          <input id="gradeInput" data-i18n-placeholder="gradePlaceholder" placeholder="高三">
+        </label>
+        <a class="profile-button" href="#plan"><span data-i18n="viewPlan">View Plan</span> <span>↗</span></a>
+        <section class="streak-calendar" aria-live="polite">
+          <div class="streak-summary">★ <span id="streakTop">0日</span> <span data-i18n="streakWord">連続学習!</span></div>
+          <div class="streak-days" id="streakCalendar"></div>
+        </section>
+      </section>
+
+      <p class="menu-label" data-i18n="menubar">Menubar</p>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#home" class="active"><span>⌂</span> <b data-i18n="navDashboard">Dashboard</b></a>
+        <a href="#plan"><span>▧</span> <b data-i18n="navCourses">Courses</b></a>
+        <a href="#timer"><span>◷</span> <b data-i18n="navTimer">Timer</b></a>
+        <a href="#activity"><span>↗</span> <b data-i18n="navProgress">Progress</b></a>
+      </nav>
+
+      <section class="course-list" aria-label="Last access courses">
+        <p data-i18n="lastAccess">Last Access Courses</p>
+        <span><i class="pink"></i> <b data-i18n="courseMath">数学演習</b></span>
+        <span><i class="orange"></i> <b data-i18n="courseEnglish">English Reading</b></span>
+        <span><i class="blue"></i> <b data-i18n="courseInfo">情報基礎</b></span>
+        <strong data-i18n="moreCourses">+4 more</strong>
+      </section>
+    </aside>
+
+    <main class="main" id="home">
+      <div class="top-overview">
+        <section class="hero">
+          <p class="welcome" id="welcomeText">おかえりなさい、Yunruさん</p>
+          <div class="hero-title">
+            <h1><span data-i18n="heroStrong">Learn</span> <span data-i18n="heroMuted">something new</span></h1>
+          </div>
+          <div class="hero-stat-grid">
+            <article class="hero-stat-card task-card-mini">
+              <span data-i18n="todayTasksCard">今日任务</span>
+              <strong id="todayTaskStat">0 / 0</strong>
+            </article>
+            <article class="hero-stat-card focus-card-mini">
+              <span data-i18n="focusTimeCard">专注时间</span>
+              <strong id="focusTimeStat">0m</strong>
+            </article>
+            <article class="hero-stat-card exam-card-mini" onclick="toggleExamForm()" role="button" tabindex="0" onkeydown="if(event.key === 'Enter') toggleExamForm()">
+              <span id="examCardTitle" data-i18n="examCountdownCard">考试倒计时</span>
+              <strong id="examCountdownStat">--</strong>
+              <small data-i18n="examTapHint">タップして登録する</small>
+              <form id="examForm" class="exam-form" onclick="event.stopPropagation()" onsubmit="event.preventDefault(); saveExamInfo();">
+                <input id="examNameInput" data-i18n-placeholder="examNamePlaceholder" placeholder="考试名称">
+                <input id="examDateInput" type="date" data-i18n-aria="examDateLabel" aria-label="考试日期">
+                <button type="submit" data-i18n="examSave">保存</button>
+              </form>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel activity-panel" id="activity">
+          <div class="panel-head">
+            <div>
+              <h2 data-i18n="learningActivity">Learning Activity</h2>
+              <p class="panel-subtitle" data-i18n="activitySubtitle">Record subject study time and see weekly progress.</p>
+            </div>
+          </div>
+
+          <div class="activity-summary">
+            <div><span data-i18n="weekTime">Week Time</span><strong id="weekTime">0分</strong></div>
+            <div><span data-i18n="streak">Streak</span><strong id="streak">0日</strong></div>
+          </div>
+
+          <form class="study-log-form" onsubmit="event.preventDefault(); addStudyLog();">
+            <select id="studyLogSubject">
+              <option value="数学">数学</option>
+              <option value="英語">英語</option>
+              <option value="物理">物理</option>
+              <option value="化学">化学</option>
+              <option value="国語">国語</option>
+              <option value="情報">情報</option>
+              <option value="その他">その他</option>
+            </select>
+            <input id="studyLogMinutes" type="number" min="1" data-i18n-placeholder="studyLogMinutesPlaceholder" placeholder="学習時間(分)">
+            <button class="primary-btn" type="submit" data-i18n="studyLogAdd">記録</button>
+          </form>
+
+          <div class="chart stacked-chart" id="activityChart" aria-label="Weekly learning chart"></div>
+          <div class="activity-legend" id="activityLegend"></div>
+      </section>
+
+      <div class="dashboard-grid">
+        <div class="left-column">
+          <section class="panel" id="plan">
+            <div class="panel-head">
+              <div>
+                <h2 data-i18n="coursesProgress">Courses Progress</h2>
+                <p class="panel-subtitle" data-i18n="planSubtitle">今日取り組む内容を登録しましょう。</p>
+              </div>
+              <div class="week-controls" aria-label="Week controls">
+                <button type="button" onclick="changePlanWeek(-1)" data-i18n-aria="prevWeek" aria-label="Previous week">‹</button>
+                <strong id="planWeekLabel">-</strong>
+                <button type="button" onclick="changePlanWeek(1)" data-i18n-aria="nextWeek" aria-label="Next week">›</button>
+                <button type="button" onclick="goToCurrentWeek()" data-i18n="thisWeek">This Week</button>
+              </div>
+            </div>
+
+            <form class="task-form" onsubmit="event.preventDefault(); addTask();">
+              <select id="subject">
+                <option value="数学">数学</option>
+                <option value="英語">英語</option>
+                <option value="物理">物理</option>
+                <option value="化学">化学</option>
+                <option value="国語">国語</option>
+                <option value="情報">情報</option>
+                <option value="その他">その他</option>
+              </select>
+              <input id="content" data-i18n-placeholder="contentPlaceholder" placeholder="例：プラチカ 10問">
+              <input id="minutes" type="number" min="0" data-i18n-placeholder="minutesPlaceholder" placeholder="予定(分)">
+              <select id="importance" data-i18n-aria="importanceLabel" aria-label="Importance">
+                <option value="important">重要</option>
+                <option value="notImportant">重要ではない</option>
+              </select>
+              <select id="urgency" data-i18n-aria="urgencyLabel" aria-label="Urgency">
+                <option value="urgent">緊急</option>
+                <option value="notUrgent">緊急ではない</option>
+              </select>
+              <button class="primary-btn" type="submit" data-i18n="add">追加</button>
+            </form>
+
+            <div class="matrix-hint" data-i18n="matrixHint">同じ象限の中でドラッグして順番を変えられます。</div>
+            <div id="tasks" class="task-matrix" aria-live="polite"></div>
+          </section>
+
+          <section class="panel timer-panel" id="timer">
+            <div class="panel-head">
+              <div>
+                <h2 data-i18n="focusTimer">Focus Timer</h2>
+                <p class="panel-subtitle" data-i18n="timerSubtitle">実際の学習時間を記録します。</p>
+              </div>
+              <div class="timer-mode" role="group" aria-label="Timer mode">
+                <button id="countUpMode" class="active" type="button" onclick="setTimerMode('countup')" data-i18n="countUp">ストップウォッチ</button>
+                <button id="countDownMode" type="button" onclick="setTimerMode('countdown')" data-i18n="countDown">カウントダウン</button>
+              </div>
+            </div>
+            <div class="timer-content">
+              <div class="timer-ring">
+                <strong id="clock">00:00:00</strong>
+                <span id="timerState" data-state="ready">準備完了</span>
+              </div>
+              <div class="timer-actions">
+                <label class="countdown-field" id="countdownField">
+                  <span data-i18n="countdownMinutes">カウントダウン(分)</span>
+                  <input id="countdownMinutes" type="number" min="1" value="25">
+                </label>
+                <button class="primary-btn" onclick="startTimer()">▶ <span data-i18n="start">開始</span></button>
+                <button class="secondary-btn" onclick="pauseTimer()" data-i18n="pause">一時停止</button>
+                <button class="secondary-btn" onclick="resetTimer()" data-i18n="reset">リセット</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
