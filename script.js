@@ -38,7 +38,7 @@ const I18N = {
     avatarColorLabel: "色",
     setupTitle: "プロフィールを設定",
     setupSubtitle: "ニックネーム、アイコン、学年を登録しましょう。",
-    setupSave: "はじめる",
+    setupSave: "OK",
     viewPlan: "計画を見る",
     streakWord: "連続学習!",
     menubar: "メニュー",
@@ -195,7 +195,7 @@ const I18N = {
     avatarColorLabel: "Color",
     setupTitle: "Set Up Your Profile",
     setupSubtitle: "Choose your nickname, icon, and current grade.",
-    setupSave: "Start",
+    setupSave: "OK",
     viewPlan: "View Plan",
     streakWord: "streak!",
     menubar: "Menubar",
@@ -352,7 +352,7 @@ const I18N = {
     avatarColorLabel: "颜色",
     setupTitle: "设置个人资料",
     setupSubtitle: "登录昵称、头像 emoji 和当前年级。",
-    setupSave: "开始使用",
+    setupSave: "OK",
     viewPlan: "查看计划",
     streakWord: "连续学习!",
     menubar: "菜单",
@@ -509,7 +509,7 @@ const I18N = {
     avatarColorLabel: "색상",
     setupTitle: "프로필 설정",
     setupSubtitle: "닉네임, 아이콘, 현재 학년을 등록하세요.",
-    setupSave: "시작하기",
+    setupSave: "OK",
     viewPlan: "계획 보기",
     streakWord: "연속 학습!",
     menubar: "메뉴",
@@ -835,7 +835,7 @@ function updateAvatar() {
   }
 
   if ($("setupAvatarEmojiInput")) {
-    $("setupAvatarEmojiInput").value = currentAvatarEmoji;
+    renderSetupEmojiPicker();
   }
 
   if ($("avatarColorInput")) {
@@ -861,6 +861,27 @@ function emojiLabels() {
   }, {});
 }
 
+function renderSetupEmojiPicker() {
+  const picker = $("setupAvatarEmojiInput");
+  if (!picker) return;
+
+  picker.innerHTML = AVATAR_OPTIONS.map(emoji => `
+    <button
+      class="${emoji === currentAvatarEmoji ? "selected" : ""}"
+      type="button"
+      role="radio"
+      aria-checked="${emoji === currentAvatarEmoji}"
+      onclick="chooseSetupAvatar('${emoji}')"
+    >${emoji}</button>
+  `).join("");
+}
+
+function chooseSetupAvatar(emoji) {
+  currentAvatarEmoji = emoji;
+  renderSetupEmojiPicker();
+  updateAvatar();
+}
+
 function showProfileSetupIfNeeded() {
   const panel = $("profileSetup");
   if (!panel || localStorage.getItem(PROFILE_SETUP_KEY)) return;
@@ -880,7 +901,7 @@ function closeProfileSetup() {
 
 function saveProfileSetup() {
   currentNickname = $("setupNicknameInput")?.value.trim() || currentNickname || "Yunru";
-  currentAvatarEmoji = $("setupAvatarEmojiInput")?.value || currentAvatarEmoji || "🐱";
+  currentAvatarEmoji = currentAvatarEmoji || "🐱";
   currentGrade = $("setupGradeInput")?.value || currentGrade || "高三";
 
   localStorage.setItem(NICKNAME_KEY, currentNickname);
@@ -920,7 +941,6 @@ function applyTranslations() {
   renderSelectOptions("subject", SUBJECTS, I18N[currentLanguage].subjects);
   renderSelectOptions("studyLogSubject", SUBJECTS, I18N[currentLanguage].subjects);
   renderSelectOptions("avatarEmojiInput", AVATAR_OPTIONS, emojiLabels());
-  renderSelectOptions("setupAvatarEmojiInput", AVATAR_OPTIONS, emojiLabels());
   renderSelectOptions("gradeInput", GRADE_OPTIONS, I18N[currentLanguage].grades);
   renderSelectOptions("setupGradeInput", GRADE_OPTIONS, I18N[currentLanguage].grades);
   renderSelectOptions("importance", IMPORTANCE_LEVELS, {
@@ -1564,9 +1584,56 @@ function refresh(renderTaskList = true) {
   renderStats();
 }
 
+function setActiveNav(sectionId) {
+  document.querySelectorAll(".nav-links a").forEach(link => {
+    link.classList.toggle("active", link.getAttribute("href") === `#${sectionId}`);
+  });
+}
+
+function updateActiveNavFromScroll() {
+  const links = Array.from(document.querySelectorAll(".nav-links a[href^='#']"));
+  const sections = links
+    .map(link => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+
+  if (sections.length === 0) return;
+
+  const checkpoint = window.innerHeight * 0.34;
+  const current = sections.reduce((active, section) => {
+    const top = section.getBoundingClientRect().top;
+    return top <= checkpoint ? section : active;
+  }, sections[0]);
+
+  setActiveNav(current.id);
+}
+
+function setupNavigationHighlight() {
+  document.querySelectorAll(".nav-links a[href^='#']").forEach(link => {
+    link.addEventListener("click", () => {
+      const sectionId = link.getAttribute("href").slice(1);
+      setActiveNav(sectionId);
+    });
+  });
+
+  window.addEventListener("hashchange", () => {
+    const sectionId = location.hash.slice(1);
+    if (sectionId) setActiveNav(sectionId);
+  });
+
+  window.addEventListener("scroll", updateActiveNavFromScroll, { passive: true });
+
+  const initialSection = location.hash.slice(1);
+  if (initialSection) {
+    setActiveNav(initialSection);
+  } else {
+    updateActiveNavFromScroll();
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   applyTranslations();
   refresh();
+  setupNavigationHighlight();
 
   $("languageSelect")?.addEventListener("change", event => {
     currentLanguage = event.target.value;
