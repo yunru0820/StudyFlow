@@ -890,6 +890,7 @@ function renderSetupEmojiPicker() {
 
 function chooseSetupAvatar(emoji) {
   currentAvatarEmoji = emoji;
+  localStorage.setItem(AVATAR_EMOJI_KEY, currentAvatarEmoji);
   if ($("avatarEmojiInput")) {
     $("avatarEmojiInput").value = emoji;
   }
@@ -1687,7 +1688,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   $("setupAvatarEmojiInput")?.addEventListener("click", event => {
-    const button = event.target.closest("button[data-emoji]");
+    const target = event.target.nodeType === Node.TEXT_NODE
+      ? event.target.parentElement
+      : event.target;
+    const button = target?.closest("button[data-emoji]");
     if (!button) return;
     chooseSetupAvatar(button.dataset.emoji);
   });
