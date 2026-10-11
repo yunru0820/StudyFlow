@@ -30,15 +30,17 @@ const I18N = {
     htmlLang: "ja",
     languageLabel: "言語",
     nicknameLabel: "ニックネーム",
-    nicknamePlaceholder: "例：Yunru",
+    nicknamePlaceholder: "例：Alex / ひな / 小林 / 민지",
     gradeLabel: "学年",
     gradePlaceholder: "例：高三",
-    avatarEmojiLabel: "好きな動物",
+    avatarEmojiLabel: "アイコン",
     avatarEmojiPlaceholder: "例：🐱",
     avatarColorLabel: "色",
     setupTitle: "プロフィールを設定",
-    setupSubtitle: "ニックネーム、アイコン、学年を登録しましょう。",
+    setupSubtitle: "言語、ニックネーム、アイコン、学年を登録しましょう。",
+    setupLanguageLabel: "言語",
     setupSave: "OK",
+    defaultName: "学習者",
     viewPlan: "計画を見る",
     streakWord: "連続学習!",
     menubar: "メニュー",
@@ -187,15 +189,17 @@ const I18N = {
     htmlLang: "en",
     languageLabel: "Language",
     nicknameLabel: "Nickname",
-    nicknamePlaceholder: "E.g. Yunru",
+    nicknamePlaceholder: "E.g. Alex / ひな / 小林 / 민지",
     gradeLabel: "Grade",
     gradePlaceholder: "E.g. Senior 3",
-    avatarEmojiLabel: "Favorite animal",
+    avatarEmojiLabel: "Avatar",
     avatarEmojiPlaceholder: "E.g. 🐱",
     avatarColorLabel: "Color",
     setupTitle: "Set Up Your Profile",
-    setupSubtitle: "Choose your nickname, icon, and current grade.",
+    setupSubtitle: "Choose your language, nickname, icon, and current grade.",
+    setupLanguageLabel: "Language",
     setupSave: "OK",
+    defaultName: "Learner",
     viewPlan: "View Plan",
     streakWord: "streak!",
     menubar: "Menubar",
@@ -344,15 +348,17 @@ const I18N = {
     htmlLang: "zh-Hans",
     languageLabel: "语言",
     nicknameLabel: "昵称",
-    nicknamePlaceholder: "例如：Yunru",
+    nicknamePlaceholder: "例如：Alex / ひな / 小林 / 민지",
     gradeLabel: "年级",
     gradePlaceholder: "例如：高三",
-    avatarEmojiLabel: "喜欢的动物",
+    avatarEmojiLabel: "头像",
     avatarEmojiPlaceholder: "例如：🐱",
     avatarColorLabel: "颜色",
     setupTitle: "设置个人资料",
-    setupSubtitle: "登录昵称、头像 emoji 和当前年级。",
+    setupSubtitle: "选择语言、登录昵称、头像 emoji 和当前年级。",
+    setupLanguageLabel: "语言",
     setupSave: "OK",
+    defaultName: "同学",
     viewPlan: "查看计划",
     streakWord: "连续学习!",
     menubar: "菜单",
@@ -501,15 +507,17 @@ const I18N = {
     htmlLang: "ko",
     languageLabel: "언어",
     nicknameLabel: "닉네임",
-    nicknamePlaceholder: "예: Yunru",
+    nicknamePlaceholder: "예: Alex / ひな / 小林 / 민지",
     gradeLabel: "학년",
     gradePlaceholder: "예: 고3",
-    avatarEmojiLabel: "좋아하는 동물",
+    avatarEmojiLabel: "아바타",
     avatarEmojiPlaceholder: "예: 🐱",
     avatarColorLabel: "색상",
     setupTitle: "프로필 설정",
-    setupSubtitle: "닉네임, 아이콘, 현재 학년을 등록하세요.",
+    setupSubtitle: "언어, 닉네임, 아이콘, 현재 학년을 등록하세요.",
+    setupLanguageLabel: "언어",
     setupSave: "OK",
+    defaultName: "학생",
     viewPlan: "계획 보기",
     streakWord: "연속 학습!",
     menubar: "메뉴",
@@ -655,9 +663,9 @@ const I18N = {
   }
 };
 
-let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "ja";
-if (!I18N[currentLanguage]) currentLanguage = "ja";
-let currentNickname = localStorage.getItem(NICKNAME_KEY) || "Yunru";
+let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "en";
+if (!I18N[currentLanguage]) currentLanguage = "en";
+let currentNickname = localStorage.getItem(NICKNAME_KEY) || "";
 let currentGrade = localStorage.getItem(GRADE_KEY) || "高三";
 let currentAvatarEmoji = localStorage.getItem(AVATAR_EMOJI_KEY) || "🐱";
 let currentAvatarColor = localStorage.getItem(AVATAR_COLOR_KEY) || "#f6e6ce";
@@ -785,7 +793,7 @@ function urgencyLabel(value) {
 }
 
 function displayName() {
-  return currentNickname.trim() || "Yunru";
+  return currentNickname.trim() || t("defaultName");
 }
 
 function updateProfileName() {
@@ -818,6 +826,10 @@ function updateProfileName() {
 
   if ($("setupGradeInput")) {
     $("setupGradeInput").value = currentGrade;
+  }
+
+  if ($("setupLanguageSelect")) {
+    $("setupLanguageSelect").value = currentLanguage;
   }
 }
 
@@ -900,10 +912,12 @@ function closeProfileSetup() {
 }
 
 function saveProfileSetup() {
-  currentNickname = $("setupNicknameInput")?.value.trim() || currentNickname || "Yunru";
+  currentLanguage = $("setupLanguageSelect")?.value || currentLanguage || "en";
+  currentNickname = $("setupNicknameInput")?.value.trim() || "";
   currentAvatarEmoji = currentAvatarEmoji || "🐱";
   currentGrade = $("setupGradeInput")?.value || currentGrade || "高三";
 
+  localStorage.setItem(LANGUAGE_KEY, currentLanguage);
   localStorage.setItem(NICKNAME_KEY, currentNickname);
   localStorage.setItem(AVATAR_EMOJI_KEY, currentAvatarEmoji);
   localStorage.setItem(GRADE_KEY, currentGrade);
@@ -911,6 +925,8 @@ function saveProfileSetup() {
 
   updateProfileName();
   updateAvatar();
+  applyTranslations();
+  refresh();
   closeProfileSetup();
 }
 
@@ -937,6 +953,7 @@ function applyTranslations() {
   });
 
   if ($("languageSelect")) $("languageSelect").value = currentLanguage;
+  if ($("setupLanguageSelect")) $("setupLanguageSelect").value = currentLanguage;
 
   renderSelectOptions("subject", SUBJECTS, I18N[currentLanguage].subjects);
   renderSelectOptions("studyLogSubject", SUBJECTS, I18N[currentLanguage].subjects);
@@ -1636,6 +1653,13 @@ document.addEventListener("DOMContentLoaded", () => {
   setupNavigationHighlight();
 
   $("languageSelect")?.addEventListener("change", event => {
+    currentLanguage = event.target.value;
+    localStorage.setItem(LANGUAGE_KEY, currentLanguage);
+    applyTranslations();
+    refresh();
+  });
+
+  $("setupLanguageSelect")?.addEventListener("change", event => {
     currentLanguage = event.target.value;
     localStorage.setItem(LANGUAGE_KEY, currentLanguage);
     applyTranslations();

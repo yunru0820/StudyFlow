@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,29 +9,31 @@
 <body>
   <div class="profile-setup" id="profileSetup" aria-hidden="true">
     <form class="profile-setup-card" onsubmit="event.preventDefault(); saveProfileSetup();">
-      <h2 data-i18n="setupTitle">プロフィールを設定</h2>
-      <p data-i18n="setupSubtitle">ニックネーム、アイコン、学年を登録しましょう。</p>
+      <h2 data-i18n="setupTitle">Set Up Your Profile</h2>
+      <p data-i18n="setupSubtitle">Choose your language, nickname, icon, and current grade.</p>
       <label>
-        <span data-i18n="nicknameLabel">ニックネーム</span>
-        <input id="setupNicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="例：Yunru">
+        <span data-i18n="setupLanguageLabel">Language</span>
+        <select id="setupLanguageSelect" aria-label="Language">
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+          <option value="ko">한국어</option>
+        </select>
       </label>
       <label>
-        <span data-i18n="avatarEmojiLabel">好きな動物</span>
-        <div class="emoji-picker" id="setupAvatarEmojiInput" role="radiogroup" aria-label="好きな動物"></div>
+        <span data-i18n="nicknameLabel">Nickname</span>
+        <input id="setupNicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="E.g. Alex / ひな / 小林 / 민지">
       </label>
       <label>
-        <span data-i18n="gradeLabel">学年</span>
+        <span data-i18n="avatarEmojiLabel">Avatar</span>
+        <div class="emoji-picker" id="setupAvatarEmojiInput" role="radiogroup" aria-label="Avatar"></div>
+      </label>
+      <label>
+        <span data-i18n="gradeLabel">Grade</span>
         <select id="setupGradeInput"></select>
       </label>
-      <button class="primary-btn" type="submit" data-i18n="setupSave">はじめる</button>
+      <button class="primary-btn" type="submit" data-i18n="setupSave">OK</button>
     </form>
-  </div>
-
-  <div class="browser-frame" aria-hidden="true">
-    <span class="dot red"></span>
-    <span class="dot amber"></span>
-    <span class="dot green"></span>
-    <div class="address">studyflow.local</div>
   </div>
 
   <div class="app-shell">
@@ -53,11 +55,11 @@
 
       <section class="profile-card">
         <div class="avatar" id="avatarPreview">🐱</div>
-        <h2 id="profileName">Yunru さん</h2>
+        <h2 id="profileName">Learner</h2>
         <div class="avatar-settings">
           <label>
-            <span data-i18n="avatarEmojiLabel">好きな動物</span>
-            <select id="avatarEmojiInput" data-i18n-aria="avatarEmojiLabel" aria-label="好きな動物"></select>
+            <span data-i18n="avatarEmojiLabel">Avatar</span>
+            <select id="avatarEmojiInput" data-i18n-aria="avatarEmojiLabel" aria-label="Avatar"></select>
           </label>
           <label>
             <span data-i18n="avatarColorLabel">色</span>
@@ -66,7 +68,7 @@
         </div>
         <label class="nickname-field">
           <span data-i18n="nicknameLabel">ニックネーム</span>
-          <input id="nicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="Yunru">
+          <input id="nicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="E.g. Alex / ひな / 小林 / 민지">
         </label>
         <label class="nickname-field">
           <span data-i18n="gradeLabel">学年</span>
@@ -99,7 +101,7 @@
     <main class="main" id="home">
       <div class="top-overview">
         <section class="hero">
-          <p class="welcome" id="welcomeText">おかえりなさい、Yunruさん</p>
+          <p class="welcome" id="welcomeText">Welcome back, Learner</p>
           <div class="hero-title">
             <h1><span data-i18n="heroStrong">Learn</span> <span data-i18n="heroMuted">something new</span></h1>
           </div>
