@@ -843,11 +843,11 @@ function updateAvatar() {
   }
 
   if ($("avatarEmojiInput")) {
-    $("avatarEmojiInput").value = currentAvatarEmoji;
+    renderEmojiPicker("avatarEmojiInput");
   }
 
   if ($("setupAvatarEmojiInput")) {
-    renderSetupEmojiPicker();
+    renderEmojiPicker("setupAvatarEmojiInput");
   }
 
   if ($("avatarColorInput")) {
@@ -866,15 +866,8 @@ function renderSelectOptions(selectId, values, labels) {
   select.value = values.includes(selected) ? selected : values[0];
 }
 
-function emojiLabels() {
-  return AVATAR_OPTIONS.reduce((labels, emoji) => {
-    labels[emoji] = emoji;
-    return labels;
-  }, {});
-}
-
-function renderSetupEmojiPicker() {
-  const picker = $("setupAvatarEmojiInput");
+function renderEmojiPicker(pickerId) {
+  const picker = $(pickerId);
   if (!picker) return;
 
   picker.innerHTML = AVATAR_OPTIONS.map(emoji => `
@@ -888,13 +881,21 @@ function renderSetupEmojiPicker() {
   `).join("");
 }
 
-function chooseSetupAvatar(emoji) {
+function chooseAvatar(emoji) {
   currentAvatarEmoji = emoji;
   localStorage.setItem(AVATAR_EMOJI_KEY, currentAvatarEmoji);
-  if ($("avatarEmojiInput")) {
-    $("avatarEmojiInput").value = emoji;
-  }
   updateAvatar();
+}
+
+function handleAvatarPickerPress(event) {
+  const target = event.target.nodeType === Node.TEXT_NODE
+    ? event.target.parentElement
+    : event.target;
+  const button = target?.closest("button[data-emoji]");
+  if (!button) return;
+
+  event.preventDefault();
+  chooseAvatar(button.dataset.emoji);
 }
 
 function showProfileSetupIfNeeded() {
@@ -960,7 +961,6 @@ function applyTranslations() {
 
   renderSelectOptions("subject", SUBJECTS, I18N[currentLanguage].subjects);
   renderSelectOptions("studyLogSubject", SUBJECTS, I18N[currentLanguage].subjects);
-  renderSelectOptions("avatarEmojiInput", AVATAR_OPTIONS, emojiLabels());
   renderSelectOptions("gradeInput", GRADE_OPTIONS, I18N[currentLanguage].grades);
   renderSelectOptions("setupGradeInput", GRADE_OPTIONS, I18N[currentLanguage].grades);
   renderSelectOptions("importance", IMPORTANCE_LEVELS, {
@@ -1681,19 +1681,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProfileName();
   });
 
-  $("avatarEmojiInput")?.addEventListener("change", event => {
-    currentAvatarEmoji = event.target.value.trim();
-    localStorage.setItem(AVATAR_EMOJI_KEY, currentAvatarEmoji);
-    updateAvatar();
-  });
-
-  $("setupAvatarEmojiInput")?.addEventListener("click", event => {
-    const target = event.target.nodeType === Node.TEXT_NODE
-      ? event.target.parentElement
-      : event.target;
-    const button = target?.closest("button[data-emoji]");
-    if (!button) return;
-    chooseSetupAvatar(button.dataset.emoji);
+  ["avatarEmojiInput", "setupAvatarEmojiInput"].forEach(pickerId => {
+    const picker = $(pickerId);
+    if (!picker) return;
+    picker.addEventListener("pointerdown", handleAvatarPickerPress);
+    picker.addEventListener("click", handleAvatarPickerPress);
   });
 
   $("avatarColorInput")?.addEventListener("input", event => {

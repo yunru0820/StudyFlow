@@ -24,10 +24,10 @@
         <span data-i18n="nicknameLabel">Nickname</span>
         <input id="setupNicknameInput" data-i18n-placeholder="nicknamePlaceholder" placeholder="E.g. Alex / ひな / 小林 / 민지">
       </label>
-      <label>
+      <div class="profile-field">
         <span data-i18n="avatarEmojiLabel">Avatar</span>
         <div class="emoji-picker" id="setupAvatarEmojiInput" role="radiogroup" aria-label="Avatar"></div>
-      </label>
+      </div>
       <label>
         <span data-i18n="gradeLabel">Grade</span>
         <select id="setupGradeInput"></select>
@@ -57,10 +57,10 @@
         <div class="avatar" id="avatarPreview">🐱</div>
         <h2 id="profileName">Learner</h2>
         <div class="avatar-settings">
-          <label>
+          <div class="profile-field">
             <span data-i18n="avatarEmojiLabel">Avatar</span>
-            <select id="avatarEmojiInput" data-i18n-aria="avatarEmojiLabel" aria-label="Avatar"></select>
-          </label>
+            <div class="emoji-picker profile-emoji-picker" id="avatarEmojiInput" role="radiogroup" aria-label="Avatar"></div>
+          </div>
           <label>
             <span data-i18n="avatarColorLabel">色</span>
             <input id="avatarColorInput" type="color" value="#f6e6ce">

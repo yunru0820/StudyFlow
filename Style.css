@@ -171,7 +171,12 @@ button {
   margin: 14px 0 4px;
 }
 
-.avatar-settings label {
+.avatar-settings .profile-field {
+  grid-column: 1 / -1;
+}
+
+.avatar-settings label,
+.avatar-settings .profile-field {
   display: grid;
   gap: 7px;
   color: var(--muted);
@@ -187,6 +192,22 @@ button {
 
 .avatar-settings input[type="color"] {
   padding: 5px;
+}
+
+.profile-emoji-picker {
+  width: 100%;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.profile-emoji-picker button {
+  height: 34px;
+  border-radius: 10px;
+  font-size: 17px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
 }
 
 .language-switch {
@@ -1738,13 +1759,13 @@ select:focus {
   }
 
   .task-matrix {
-    grid-template-columns: 1fr;
+    width: max(100%, 620px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
-      "importantUrgent"
-      "importantNotUrgent"
-      "notImportantUrgent"
-      "notImportantNotUrgent";
-    padding: 18px;
+      "importantNotUrgent importantUrgent"
+      "notImportantNotUrgent notImportantUrgent";
+    gap: 14px;
+    padding: 32px 18px 30px;
     background: #fbfbfc;
   }
 
@@ -1752,11 +1773,20 @@ select:focus {
     min-height: 150px;
   }
 
-  .task-matrix::before,
-  .task-matrix::after,
+  #plan {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #plan .panel-head,
+  #plan .task-form,
+  #plan .matrix-hint {
+    min-width: 620px;
+  }
+
   .matrix-axis,
   .matrix-label {
-    display: none;
+    font-size: 10px;
   }
 
   .activity-summary,
@@ -1766,13 +1796,16 @@ select:focus {
 
   .activity-panel {
     padding: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .activity-panel .chart {
     height: 176px;
+    width: max(100%, 560px);
     grid-template-columns: 34px repeat(7, minmax(18px, 1fr));
     gap: 6px;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .activity-panel .chart::before {
@@ -1793,6 +1826,7 @@ select:focus {
   }
 
   .activity-legend {
+    min-width: 560px;
     gap: 8px 10px;
   }
 
@@ -1844,7 +1878,8 @@ body > .profile-setup .profile-setup-card p {
   line-height: 1.5 !important;
 }
 
-body > .profile-setup .profile-setup-card label {
+body > .profile-setup .profile-setup-card label,
+body > .profile-setup .profile-setup-card .profile-field {
   display: grid !important;
   gap: 8px !important;
   color: #8f8a94 !important;
@@ -1872,12 +1907,33 @@ body > .profile-setup .profile-setup-card select {
   border-radius: 13px;
   background: #fbfbfc;
   font-size: 20px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
 }
 
 .emoji-picker button.selected {
   border-color: var(--pink);
   background: var(--pink-soft);
   box-shadow: 0 0 0 3px rgba(219, 47, 118, .12);
+}
+
+.avatar-settings .profile-emoji-picker {
+  width: 100%;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.avatar-settings .profile-emoji-picker button {
+  height: 34px;
+  min-width: 0;
+  border-radius: 10px;
+  font-size: 17px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
 }
 
 @media (max-width: 430px) {
